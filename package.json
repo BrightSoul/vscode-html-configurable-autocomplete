@@ -130,7 +130,7 @@
 							},
 							"definitionRegexp": {
 								"type": "string",
-								"description": "Definitions will be scanned only when when the cursor is at a position matched by this regexp. Required."
+								"description": "A regexp used to detect whether the cursor is on a definition. The first capture group, if present, will be used as the name of the definition otherwise the whole match is used. Required."
 							},
 							"includeGlobPattern": {
 								"type": "string",
@@ -143,7 +143,7 @@
 							},
 							"contentRegexp": {
 								"type": "string",
-								"description": "A regexp used to extract definition from content. The first match position will be used. Required."
+								"description": "A regexp used to extract a definition name from content. The first capture group is used, if present, otherwise the whole match is used. If it's equal to the definitionRegexp match, then that location will open. Required."
 							}
 						}
 					}

@@ -9,7 +9,7 @@ module.exports = class ConfigurableDefinitionOptions {
     enable = true;
 
     /**
-     * Definitions will be scanned only when when the cursor is at a position matched by this regexp. Required.
+     * A regexp used to detect whether the cursor is on a definition. The first capture group, if present, will be used as the name of the definition otherwise the whole match is used. Required.
      * @type {RegExp}
      */
     definitionRegexp;
@@ -27,7 +27,7 @@ module.exports = class ConfigurableDefinitionOptions {
     excludeGlobPattern = '';
 
     /**
-     * A regexp used to extract definition from content. The first match position will be used. Required.
+     * A regexp used to extract a definition name from content. The first capture group is used, if present, otherwise the whole match is used. If it's equal to the definitionRegexp match, then that location will open. Required.
      * @type {RegExp}
      */
     contentRegexp;
@@ -43,8 +43,8 @@ module.exports = class ConfigurableDefinitionOptions {
      */
     constructor({ enable, definitionRegexp, includeGlobPattern, excludeGlobPattern, contentRegexp }) {
         this.enable = enable != null ? enable : this.enable;
-        this.definitionRegexp = new RegExp(definitionRegexp);
-        this.contentRegexp = new RegExp(contentRegexp);
+        this.definitionRegexp = new RegExp(definitionRegexp, 'gi');
+        this.contentRegexp = new RegExp(contentRegexp, 'gim');
         if (!includeGlobPattern) {
             throw `${prefix} you must set includeGlobPattern because it's required`;
         }
