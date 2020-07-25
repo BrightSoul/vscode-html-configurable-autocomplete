@@ -25,10 +25,10 @@
 				"htmlConfigurableAutocomplete.completionItemProviders": {
 					"type": "array",
 					"default": [],
-					"description": "Completion item providers ruleset",
+					"description": "Configuration ruleset for the completion item provider",
 					"items": {
 						"type": "object",
-						"title": "Completion item provider rule",
+						"title": "Configuration rule for the completion item provider",
 						"properties": {
 							"enable": {
 								"type": "boolean",
@@ -95,12 +95,12 @@
 							"includeGlobPattern": {
 								"type": "string",
 								"default": "",
-								"description": "All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, defaults to '' (no file will be scanned)."
+								"description": "All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, no files will be scanned by default. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
 							},
 							"excludeGlobPattern": {
 								"type": "string",
 								"default": "",
-								"description": "All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Optional, defaults to '' (no files excluded)."
+								"description": "All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Optional, no files will be excluded by default. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
 							},
 							"contentRegexp": {
 								"type": "string",
@@ -118,10 +118,10 @@
 				"htmlConfigurableAutocomplete.definitionProviders": {
 					"type": "array",
 					"default": [],
-					"description": "Definition providers ruleset",
+					"description": "Configuration ruleset for the definition provider",
 					"items": {
 						"type": "object",
-						"title": "Definition provider rule",
+						"title": "Configuration rule for the definition provider",
 						"properties": {
 							"enable": {
 								"type": "boolean",
@@ -134,12 +134,12 @@
 							},
 							"includeGlobPattern": {
 								"type": "string",
-								"description": "All files matching this glob pattern will be scanned for definitions. Required."
+								"description": "All files matching this glob pattern will be scanned for definitions. Required. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
 							},
 							"excludeGlobPattern": {
 								"type": "string",
 								"default": "",
-								"description": "All files matching this glob pattern will be excluded from the scanning of definitions. Optional, defaults to '' (no files excluded)."
+								"description": "All files matching this glob pattern will be excluded from the scanning of definitions. Optional, defaults to '' (no files excluded). Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
 							},
 							"contentRegexp": {
 								"type": "string",

@@ -1,3 +1,5 @@
+const prefix = 'Error in configuration in htmlConfigurableAutocomplete.definitionProviders:';
+
 module.exports = class ConfigurableDefinitionOptions {
     
     /**
@@ -13,13 +15,13 @@ module.exports = class ConfigurableDefinitionOptions {
     definitionRegexp;
 
     /**
-     * All files matching this glob pattern will be scanned for definitions. Required.
+     * All files matching this glob pattern will be scanned for definitions. Required. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}.
      * @type {string}
      */
     includeGlobPattern;
 
     /**
-     * All files matching this glob pattern will be excluded from the scanning of definitions. Optional, defaults to '' (no files excluded).
+     * All files matching this glob pattern will be excluded from the scanning of definitions. Optional, defaults to '' (no files excluded). Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}.
      * @type {string}
      */
     excludeGlobPattern = '';
@@ -44,7 +46,7 @@ module.exports = class ConfigurableDefinitionOptions {
         this.definitionRegexp = new RegExp(definitionRegexp);
         this.contentRegexp = new RegExp(contentRegexp);
         if (!includeGlobPattern) {
-            throw 'You must set includeGlobPattern';
+            throw `${prefix} you must set includeGlobPattern because it's required`;
         }
         this.includeGlobPattern = includeGlobPattern;
         this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern;

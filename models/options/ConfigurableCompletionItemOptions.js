@@ -1,4 +1,5 @@
 const { CompletionItemKind } = require('vscode');
+const prefix = 'Error in configuration in htmlConfigurableAutocomplete.completionItemProviders:';
 
 module.exports = class ConfigurableCompletionItemOptions {
 
@@ -45,19 +46,19 @@ module.exports = class ConfigurableCompletionItemOptions {
     itemKind = CompletionItemKind.Field;
 
     /**
-     * All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, defaults to '' (no file will be scanned).
-     * @type {string}
+     * All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, no files will be scanned by default. If you set it, you must also set contentRegexp. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}.
+     * @type {string|undefined}
      */
-    includeGlobPattern = '';
+    includeGlobPattern;
 
     /**
-     * All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Optional, defaults to '' (no files excluded).
-     * @type {string}
+     * All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Optional, no files are excluded by default.
+     * @type {string|undefined}
      */
-    excludeGlobPattern = '';
+    excludeGlobPattern;
 
     /**
-     * A regexp used to extract completion items from content. The first capture group will be used, if present, otherwise the whole match is used. Required.
+     * A regexp used to extract completion items from content. The first capture group will be used, if present, otherwise the whole match is used. Optional. If you set it, you must also set includeGlobPattern.
      * @type {RegExp|undefined}
      */
     contentRegexp;
@@ -87,10 +88,10 @@ module.exports = class ConfigurableCompletionItemOptions {
 
 
         if (!triggerCharacters || !Array.isArray(triggerCharacters) || triggerCharacters.length == 0) {
-            throw 'triggerCharacters is a required option and it must define at least one character';
+            throw `${prefix} triggerCharacters is a required option and it must define at least one character`;
         }
         if (triggerCharacters.find(char => char.length != 1)) {
-            throw 'each of triggerCharacters must be a string of length 1';
+            throw `${prefix} each of triggerCharacters must be a string of length 1`;
         }
         this.triggerCharacters = triggerCharacters;
         this.enable = enable != null ? enable : this.enable;
@@ -113,28 +114,28 @@ module.exports = class ConfigurableCompletionItemOptions {
                 //@ts-ignore
                 this.itemKind = CompletionItemKind[itemKind];
             } else {
-                throw `itemKind value '${itemKind}' is not allowed. It must be one of CompletionItemKind. See the documentation here: https://code.visualstudio.com/api/references/vscode-api#CompletionItemKind`;
+                throw `${prefix} itemKind value '${itemKind}' is not allowed. It must be one of CompletionItemKind. See the documentation here: https://code.visualstudio.com/api/references/vscode-api#CompletionItemKind`;
             }
         }
 
         if (this.maxFiles <= 0) {
-            throw `Cannot set maxFiles to '${this.maxFiles}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
+            throw `${prefix} cannot set maxFiles to '${this.maxFiles}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
         }
 
         if (this.maxItems <= 0) {
-            throw `Cannot set maxItems to '${this.maxItems}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
+            throw `${prefix} cannot set maxItems to '${this.maxItems}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
         }
 
         if (this.maxItemsPerFile <= 0) {
-            throw `Cannot set maxItemsPerFile to '${this.maxItemsPerFile}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
+            throw `${prefix} cannot set maxItemsPerFile to '${this.maxItemsPerFile}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
         }
 
         if (!this.includeGlobPattern && this.staticItems.length == 0) {
-            throw 'You must either provide a includeGlobPattern or provide at least one of staticItems for this rule to be meaningful. If you want to disable a rule, just set enabled: false.';
+            throw `${prefix} you must either provide a includeGlobPattern or provide at least one of staticItems for this rule to be meaningful. If you want to disable a rule, just set enabled: false.`;
         }
 
-        if (this.includeGlobPattern && !this.contentRegexp) {
-            throw 'If you set includeGlobPattern, you must also set contentRegexp, otherwise the extension won\'t know how to exract completion items from files.';
+        if ((this.includeGlobPattern && !this.contentRegexp) || (this.contentRegexp && !this.includeGlobPattern)) {
+            throw `${prefix} if you set includeGlobPattern, you must also set contentRegexp, otherwise the extension won\'t know how to extract completion items from files.`;
         }
         
     }
