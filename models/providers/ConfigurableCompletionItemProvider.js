@@ -2,6 +2,7 @@ const vscode = require('vscode');
 const path = require('path');
 const fs = require('fs').promises;
 const ConfigurableCompletionItemOptions = require('../options/ConfigurableCompletionItemOptions');
+const PathProvider = require('../services/PathProvider');
 
 module.exports = class ConfigurableCompletionItemProvider {
 
@@ -98,8 +99,8 @@ module.exports = class ConfigurableCompletionItemProvider {
 			return [];
 		}
 
-		const includeGlobPattern = this.replaceVariablesInPattern(this.options.includeGlobPattern, document);
-		const excludeGlobPattern = this.replaceVariablesInPattern(this.options.excludeGlobPattern, document);
+		const includeGlobPattern = PathProvider.replacePathVariables(this.options.includeGlobPattern, document);
+		const excludeGlobPattern = PathProvider.replacePathVariables(this.options.excludeGlobPattern, document);
 		if (!includeGlobPattern) {
 			return [];
 		}
@@ -129,34 +130,5 @@ module.exports = class ConfigurableCompletionItemProvider {
 			}
 		}
 		return completionList;
-	}
-
-	/**
-	 * @param {string|undefined} pattern
-	 * @param {vscode.TextDocument} document
-	 */
-	replaceVariablesInPattern(pattern, document) {
-		if (!pattern) {
-			return undefined;
-		}
-		const workspaceDir = vscode.workspace.getWorkspaceFolder(document.uri);
-		if (!workspaceDir) {
-			return pattern;
-		}
-		const fsPath = document.uri.fsPath;
-		const dirName = path.basename(path.relative(workspaceDir.uri.fsPath, path.dirname(fsPath)));
-		const fileName = path.basename(fsPath);
-		let dirPath = (path.relative(workspaceDir.uri.fsPath, fsPath.substr(0, fsPath.length - fileName.length)).replace(/\\/g, '/') + '/');
-		if (dirPath.substr(0, 1) == '/') {
-			dirPath = dirPath.substr(1);
-		}
-		const filePath = path.relative(workspaceDir.uri.fsPath, fsPath).replace(/\\/g, '/');
-		const fileNameWithoutExtension = fileName.substr(0, fileName.length - path.extname(fileName).length);
-		return pattern
-				.replace('${dirName}', dirName)
-				.replace('${dirPath}', dirPath)
-				.replace('${filePath}', filePath)
-				.replace('${fileName}', fileName)
-				.replace('${fileNameWithoutExtension}', fileNameWithoutExtension);
 	}
 };
