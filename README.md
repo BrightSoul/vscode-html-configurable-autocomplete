@@ -115,7 +115,7 @@ They support the following placeholders which will be replaced at runtime. Suppo
 
 Oh well, something could be improved...
 
- * This version works with regular expressions so it doesn't offer any advanced, full-fledged JavaScript parser that could help you extract symbols from a js file in a more reliable way;
+ * This version works with regular expressions so it doesn't offer any advanced, full-fledged JavaScript parser that could help you get completion items by descriptors in a js file;
 
  * VSCode must be restarted after changing this extension configuration.
 
