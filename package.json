@@ -3,6 +3,7 @@
 	"displayName": "html-configurable-autocomplete",
 	"description": "Autocomplete your HTML content and navigate to definitions by providing simple matching rules",
 	"version": "1.0.0",
+	"publisher": "BrightSoul",
 	"author": {
 		"name": "Moreno Gentili",
 		"email": "brightsoul@tiscali.it"
