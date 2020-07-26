@@ -1,6 +1,6 @@
 {
 	"name": "html-configurable-autocomplete",
-	"displayName": "html-configurable-autocomplete",
+	"displayName": "HTML Configurable Autocomplete",
 	"description": "Autocomplete your HTML content and navigate to definitions by providing simple matching rules",
 	"version": "1.0.0",
 	"publisher": "BrightSoul",
@@ -20,6 +20,13 @@
 	},
 	"categories": [
 		"Other"
+	],
+	"keywords": [
+		"autocomplete",
+		"configurable",
+		"html",
+		"frameworkless",
+		"custom"
 	],
 	"activationEvents": [
 		"onLanguage:html"
