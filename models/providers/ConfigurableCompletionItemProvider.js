@@ -71,8 +71,9 @@ module.exports = class ConfigurableCompletionItemProvider {
 		}
 
 		const regexp = new RegExp(this.options.triggerRegexp.source, this.options.triggerRegexp.flags);
+		const relevantText = currentLine.text.substr(0, position.character);
 		let match;
-		while (match = regexp.exec(currentLine.text)) {
+		while (match = regexp.exec(relevantText)) {
 			if (position.character >= match.index && position.character <= (match.index + match[0].length)) {
 				//The cursor is inside a match, let's go ahead with completion
 				return true;

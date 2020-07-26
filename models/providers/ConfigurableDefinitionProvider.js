@@ -88,7 +88,7 @@ module.exports = class ConfigurableDefinitionProvider {
 					continue;
 				}
 				//What line? What character?
-				const lines = textContent.substr(0, match.index).split('\n');
+				const lines = textContent.substr(0, match.index+1).split('\n');
 
 				const uri = vscode.Uri.file(result.fsPath);
 				const position = new vscode.Position(lines.length-1, lines[lines.length-1].length);
