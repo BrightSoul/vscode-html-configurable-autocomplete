@@ -4,13 +4,13 @@
 	"description": "Autocomplete your HTML content and navigate to definitions by providing simple matching rules",
 	"version": "1.0.0",
 	"publisher": "BrightSoul",
-	"icon": "",
+	"icon": "icon.png",
 	"author": {
 		"name": "Moreno Gentili",
 		"email": "brightsoul@tiscali.it"
 	},
 	"galleryBanner": {
-		"color": "#ff6b02",
+		"color": "#cacaa6",
 		"theme": "light"
 	},
 	"repository": {

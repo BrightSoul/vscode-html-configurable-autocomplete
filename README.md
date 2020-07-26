@@ -2,23 +2,25 @@
 **Autocomplete your HTML** content and **navigate to definitions** by providing simple matching rules. Be proud of your frameworkless / non-conformant project and be productive again with this extension!
 
 ## Features
-Provide your own configuration to instruct it on how it should autocomplete HTML content files and navigate to definitions.
+This extension provides completion items to HTML content and navigate to definitions.
 
 ![completion.gif](completion.gif)
 
-Here's a sample configuration you can see in action in this GitHub project.
+It needs your configuration so it can find completion items and definitions in your project. Here's a sample configuration you can see in action in this GitHub project.
+
 [https://github.com/Halleymedia/vuejs-es6-demo](https://github.com/Halleymedia/vuejs-es6-demo)
 
 Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-es6-demo/blob/master/.vscode/settings.json) file in particular.
 
-```
+```json
 {
-  //Enable the autocomplete extension (it could be omitted)
+  //Enable the extension (it can be omitted)
   "htmlConfigurableAutocomplete.enable": true,
 
   //Tell it how to autocomplete HTML content
   "htmlConfigurableAutocomplete.completionItemProviders": [
     {
+      //Can be omitted
       "enable": true,
       //It should be activated when < is pressed (for tag names)
       "triggerCharacters": ["<"],
@@ -30,17 +32,19 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       "itemKind": "Constant"
     },
     {
+      //Can be omitted
       "enable": true,
       //It should also be activated when space is pressed (for attributes)
       "triggerCharacters": [" "],
-      //But just when where in a custom component (it has a - symbol in the tag name)
-      "triggerRegexp": "<[a-z]+-[a-z]+[^<]*",
-      //Show a couple statically-definited completion items
+      //But just when the cursor is in an element tag, at a position where an attribute name can be inserted
+      "triggerRegexp": "<[a-z-]+(\\s+[a-z-]+(=\".*?\")?)*[^\"<>]*",
+      //Show a couple statically-defined completion items
       "staticItems": ["data-for", "data-if"],
-      //It should have this icon
+      //They should have this icon
       "itemKind": "Enum"
     },
     {
+      //Can be omitted
       "enable": true,
       //It should also be activated when { is pressed (for moustached syntax)
       "triggerCharacters": ["{"],
@@ -54,10 +58,10 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       "itemKind": "Field"
     }
   ],
-
   //Now tell it how to navigate to definitions
   "htmlConfigurableAutocomplete.definitionProviders": [
     {
+      //Can be omitted
       "enable": true,
       //Definitions are provided when the cursor is on tag names having a - in them
       "definitionRegexp": "</?([a-z]+-[a-z]+)",
@@ -65,6 +69,16 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       "includeGlobPattern": "src/components/**/*.js",
       //And find that very same tag name in them; if one is found, VSCode navigates to definition!
       "contentRegexp": "@Component\\(\\s*['\"]([a-z-]+)"
+    },
+    {
+      //Can be omitted
+      "enable": true,
+      //Definitions are provided when the cursor is inside moustaches
+      "definitionRegexp": "{{\\s*(.+?)\\s*}}",
+      //Then go look inside js file that lives in the same directory and has the same name with the js extension
+      "includeGlobPattern": "${dirPath}${fileNameWithoutExtension}[.]js",
+      //Then find the field it's referring to
+      "contentRegexp": "^\\s*([a-z0-9_]+)\\s*;?\\s*$"
     }
   ]
 }
@@ -80,10 +94,10 @@ No requirements.
 This extension contributes the following settings:
 
 * `htmlConfigurableAutocomplete.enable`: set to _false_ in case you want to disable the extension;
-* `htmlConfigurableAutocomplete.completionItemProviders`: set rules for item completion;
-* `htmlConfigurableAutocomplete.definitionProviders`: set rules for definitions.
+* `htmlConfigurableAutocomplete.completionItemProviders`: set rules for item completion (see the example above for details);
+* `htmlConfigurableAutocomplete.definitionProviders`: set rules for definitions  (see the example above for details).
 
-> **Important** VSCode must be reloaded after changing the configuration. This might be fixed in a future release.
+> **Important** VSCode must be reloaded after changing the configuration. This will be fixed in a future release.
 
 ## Known Issues
 
