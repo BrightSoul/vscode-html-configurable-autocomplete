@@ -4,9 +4,14 @@
 	"description": "Autocomplete your HTML content and navigate to definitions by providing simple matching rules",
 	"version": "1.0.0",
 	"publisher": "BrightSoul",
+	"icon": "",
 	"author": {
 		"name": "Moreno Gentili",
 		"email": "brightsoul@tiscali.it"
+	},
+	"galleryBanner": {
+		"color": "#ff6b02",
+		"theme": "light"
 	},
 	"repository": {
 		"type" : "git",
@@ -31,6 +36,7 @@
 	"activationEvents": [
 		"onLanguage:html"
 	],
+	"license": "MIT",
 	"main": "./extension.js",
 	"contributes": {
 		"configuration": {
