@@ -27,7 +27,7 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Then look into js files in the components directory
       "includeGlobPattern": "src/components/**/*.js",
       //Find the component name in there and show it as a completion item
-      "contentRegexp": "@Component\\(\\s*['\"]([a-z-]+)",
+      "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)",
       //It should have this icon
       "itemKind": "Constant"
     },
@@ -68,7 +68,7 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Then go look inside js files that live in the components directory
       "includeGlobPattern": "src/components/**/*.js",
       //And find that very same tag name in them; if one is found, VSCode navigates to definition!
-      "contentRegexp": "@Component\\(\\s*['\"]([a-z-]+)"
+      "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)"
     },
     {
       //Can be omitted
@@ -92,12 +92,24 @@ No requirements.
 ## Extension Settings
 
 This extension contributes the following settings:
-
 * `htmlConfigurableAutocomplete.enable`: set to _false_ in case you want to disable the extension;
 * `htmlConfigurableAutocomplete.completionItemProviders`: set rules for item completion (see the example above for details);
 * `htmlConfigurableAutocomplete.definitionProviders`: set rules for definitions  (see the example above for details).
 
 > **Important** VSCode must be reloaded after changing the configuration. This will be fixed in a future release.
+
+The following configuration keys indicate glob patterns:
+* `htmlConfigurableAutocomplete.completionItemProviders.includeGlobPattern`;
+* `htmlConfigurableAutocomplete.completionItemProviders.excludeGlobPattern`; 
+* `htmlConfigurableAutocomplete.definitionProviders.includeGlobPattern`;
+* `htmlConfigurableAutocomplete.definitionProviders.excludeGlobPattern`.
+
+They support the following placeholders which will be replaced at runtime. Suppose the user has the editor opened on `src/components/layout/MainLayout.html`:
+* `${dirName}` is replaced with `layout`;
+* `${dirPath}` is replaced with `src/components/layout/`;
+* `${filePath}` is replaced with `src/components/layout/MainLayout.html`;
+* `${fileName}` is replaced with `MainLayout.html`;
+* `${fileNameWithoutExtension}` is replaced with `MainLayout`.
 
 ## Known Issues
 

@@ -13,6 +13,7 @@
 		"color": "#cacaa6",
 		"theme": "light"
 	},
+	"markdown": "github",
 	"repository": {
 		"type" : "git",
 		"url" : "https://github.com/BrightSoul/vscode-html-configurable-autocomplete.git"
