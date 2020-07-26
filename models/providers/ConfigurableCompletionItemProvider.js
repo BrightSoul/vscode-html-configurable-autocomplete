@@ -1,8 +1,8 @@
 const vscode = require('vscode');
-const path = require('path');
 const fs = require('fs').promises;
 const ConfigurableCompletionItemOptions = require('../options/ConfigurableCompletionItemOptions');
 const PathProvider = require('../services/PathProvider');
+const Logger = require('../services/Logger');
 
 module.exports = class ConfigurableCompletionItemProvider {
 
@@ -109,6 +109,12 @@ module.exports = class ConfigurableCompletionItemProvider {
 		 * @type {Array<vscode.CompletionItem>}
 		 */
 		const completionList = [];
+
+		if (results.length == 0) {
+			Logger.warn(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in completion item rule with trigger characters ${this.options.triggerCharacters.join(',')}`);
+			return completionList;
+		}
+
 		for (const result of results) {
 			try {
 				if (token.isCancellationRequested) {
@@ -126,7 +132,7 @@ module.exports = class ConfigurableCompletionItemProvider {
 					completionList.push(item);
 				}
 			} catch (error) {
-				console.log(error);
+				Logger.error(error);
 			}
 		}
 		return completionList;

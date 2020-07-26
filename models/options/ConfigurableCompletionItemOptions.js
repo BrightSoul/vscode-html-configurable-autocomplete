@@ -1,5 +1,5 @@
 const { CompletionItemKind } = require('vscode');
-const prefix = 'Error in configuration in htmlConfigurableAutocomplete.completionItemProviders:';
+const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.completionItemProviders:';
 
 module.exports = class ConfigurableCompletionItemOptions {
 
@@ -86,12 +86,11 @@ module.exports = class ConfigurableCompletionItemOptions {
      */
     constructor({enable, triggerCharacters, triggerRegexp, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, contentRegexp, staticItems}) {
 
-
         if (!triggerCharacters || !Array.isArray(triggerCharacters) || triggerCharacters.length == 0) {
-            throw `${prefix} triggerCharacters is a required option and it must define at least one character`;
+            throw `${errorPrefix} triggerCharacters is a required option and it must define at least one character`;
         }
         if (triggerCharacters.find(char => char.length != 1)) {
-            throw `${prefix} each of triggerCharacters must be a string of length 1`;
+            throw `${errorPrefix} each of triggerCharacters must be a string of length 1`;
         }
         this.triggerCharacters = triggerCharacters;
         this.enable = enable != null ? enable : this.enable;
@@ -106,7 +105,7 @@ module.exports = class ConfigurableCompletionItemOptions {
             this.triggerRegexp = new RegExp(triggerRegexp, 'gi');
         }
         if (contentRegexp) {
-            this.contentRegexp = new RegExp(contentRegexp, 'gi');
+            this.contentRegexp = new RegExp(contentRegexp, 'gim');
         }
 
         if (itemKind) {
@@ -114,28 +113,28 @@ module.exports = class ConfigurableCompletionItemOptions {
                 //@ts-ignore
                 this.itemKind = CompletionItemKind[itemKind];
             } else {
-                throw `${prefix} itemKind value '${itemKind}' is not allowed. It must be one of CompletionItemKind. See the documentation here: https://code.visualstudio.com/api/references/vscode-api#CompletionItemKind`;
+                throw `${errorPrefix} itemKind value '${itemKind}' is not allowed. It must be one of CompletionItemKind. See the documentation here: https://code.visualstudio.com/api/references/vscode-api#CompletionItemKind`;
             }
         }
 
         if (this.maxFiles <= 0) {
-            throw `${prefix} cannot set maxFiles to '${this.maxFiles}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
+            throw `${errorPrefix} cannot set maxFiles to '${this.maxFiles}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
         }
 
         if (this.maxItems <= 0) {
-            throw `${prefix} cannot set maxItems to '${this.maxItems}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
+            throw `${errorPrefix} cannot set maxItems to '${this.maxItems}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
         }
 
         if (this.maxItemsPerFile <= 0) {
-            throw `${prefix} cannot set maxItemsPerFile to '${this.maxItemsPerFile}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
+            throw `${errorPrefix} cannot set maxItemsPerFile to '${this.maxItemsPerFile}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
         }
 
         if (!this.includeGlobPattern && this.staticItems.length == 0) {
-            throw `${prefix} you must either provide a includeGlobPattern or provide at least one of staticItems for this rule to be meaningful. If you want to disable a rule, just set enabled: false.`;
+            throw `${errorPrefix} you must either provide a includeGlobPattern or provide at least one of staticItems for this rule to be meaningful. If you want to disable a rule, just set enabled: false.`;
         }
 
         if ((this.includeGlobPattern && !this.contentRegexp) || (this.contentRegexp && !this.includeGlobPattern)) {
-            throw `${prefix} if you set includeGlobPattern, you must also set contentRegexp, otherwise the extension won\'t know how to extract completion items from files.`;
+            throw `${errorPrefix} if you set includeGlobPattern, you must also set contentRegexp, otherwise the extension won\'t know how to extract completion items from files.`;
         }
         
     }

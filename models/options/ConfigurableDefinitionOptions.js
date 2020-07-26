@@ -1,4 +1,4 @@
-const prefix = 'Error in configuration in htmlConfigurableAutocomplete.definitionProviders:';
+const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.definitionProviders:';
 
 module.exports = class ConfigurableDefinitionOptions {
     
@@ -46,7 +46,7 @@ module.exports = class ConfigurableDefinitionOptions {
         this.definitionRegexp = new RegExp(definitionRegexp, 'gi');
         this.contentRegexp = new RegExp(contentRegexp, 'gim');
         if (!includeGlobPattern) {
-            throw `${prefix} you must set includeGlobPattern because it's required`;
+            throw `${errorPrefix} you must set includeGlobPattern because it's required`;
         }
         this.includeGlobPattern = includeGlobPattern;
         this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern;

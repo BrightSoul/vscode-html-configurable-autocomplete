@@ -1,6 +1,7 @@
 const vscode = require('vscode');
 const ConfigurableDefinitionOptions = require('../options/ConfigurableDefinitionOptions');
 const PathProvider = require('../services/PathProvider');
+const Logger = require('../services/Logger');
 const fs = require('fs').promises;
 
 module.exports = class ConfigurableDefinitionProvider {
@@ -67,6 +68,12 @@ module.exports = class ConfigurableDefinitionProvider {
 			return;
 		}
 		const results = await vscode.workspace.findFiles(includeGlobPattern, excludeGlobPattern, undefined, token);
+
+		if (results.length == 0) {
+			Logger.warn(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in definition provider rule with definition regexp ${this.options.definitionRegexp}`);
+			return;
+		}
+
 		for (const result of results) {
 			if (token.isCancellationRequested) {
 				return;
