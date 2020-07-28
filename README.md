@@ -112,7 +112,7 @@ This extension contributes the following settings:
 * `htmlConfigurableAutocomplete.completionItemProviders`: set rules for item completion (see the example above for details);
 * `htmlConfigurableAutocomplete.definitionProviders`: set rules for definitions  (see the example above for details).
 
-> **Important** VSCode must be reloaded after changing the configuration. This will be fixed in a future release.
+> **Important** This extension supports hot configuration reload so any change will be immediately applied. No need to restart VSCode. If something's not working, check the output channel "HTML Configurable Autocomplete" because you might find helpful messages there (e.g. an invalid regexp which is breaking the provider).
 
 The following configuration keys indicate glob patterns:
 * `htmlConfigurableAutocomplete.completionItemProviders.includeGlobPattern`;
@@ -127,7 +127,7 @@ They support the following placeholders which will be replaced at runtime. Suppo
 * `${fileName}` is replaced with `MainLayout.html`;
 * `${fileNameWithoutExtension}` is replaced with `MainLayout`.
 
-Additionally, the following placeholders are also supported if you configured at least one definition provider which is matching code at the current cursor position. If a definition is found, its file path will be used to replace these placholders. Supposed a definition is found at `src/components/shared/LoadingIndicator.js`:
+Additionally, the following placeholders are also supported for glob patterns of completion item provider. They need at least one configured definition provider which is matching code at the current cursor position. If a definition is found, its file path will be used to replace these placholders. Supposed a definition is found in `src/components/shared/LoadingIndicator.js`:
 * `${definitionDirName}` is replaced with `shared`;
 * `${definitionDirPath}` is replaced with `src/components/shared/`;
 * `${definitionFilePath}` is replaced with `src/components/shared/LoadingIndicator.js`;
@@ -140,7 +140,7 @@ Oh well, something could be improved...
 
  * This version works with regular expressions so it doesn't offer any advanced, full-fledged JavaScript parser that could help you get completion items by descriptors in a js file;
 
- * VSCode must be restarted after changing this extension configuration.
+ * Find References not implmented at this time but might be in the future.
 
 ## Release Notes
 
