@@ -3,9 +3,9 @@
 
 ## Features
 This extension provides:
- * completion items when you type specific character;
- * navigate to definitions of components;
- * find references of a component.
+ * _completion items_ when you type specific character(s). They are registered for HTML files;
+ * _navigate to definitions_ of components. They are registered for HTML files;
+ * _find references_ of a component. They are registered for JavaScript files.
 
 ![completion.gif](completion.gif)
 
