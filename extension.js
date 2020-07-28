@@ -41,17 +41,20 @@ function registerProviders() {
 	}
 	const completionItemOptions = configuration.completionItemProviders;
 	const definitionOptions = configuration.definitionProviders;
+	const referenceOptions = configuration.referenceProviders;
 
 	try {
 		providerRegistry.registerCompletionItemProviders(completionItemOptions);
 		Logger.info(`Registered ${providerRegistry.completionItemProviders.length} completion item providers`);
 		providerRegistry.registerDefinitionProviders(definitionOptions);
 		Logger.info(`Registered ${providerRegistry.definitionProviders.length} definition providers`);
+		providerRegistry.registerReferenceProviders(referenceOptions);
+		Logger.info(`Registered ${providerRegistry.referenceProviders.length} reference providers`);
 	} catch (error) {
 		Logger.error(`${error}`);
 	}
 
-	if (providerRegistry.completionItemProviders.length + providerRegistry.definitionProviders.length == 0) {
+	if (providerRegistry.completionItemProviders.length + providerRegistry.definitionProviders.length + providerRegistry.referenceProviders.length == 0) {
 		Logger.warn(`Will not do anything since no (valid) rules for completionItemProviders and definitionProviders were set in the configuration.`);
 		return;
 	}

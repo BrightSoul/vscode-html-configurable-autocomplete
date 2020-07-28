@@ -3,7 +3,10 @@ const ConfigurableDefinitionOptions = require('../options/ConfigurableDefinition
 const ConfigurableDefinitionProvider = require('../providers/ConfigurableDefinitionProvider');
 const ConfigurableCompletionItemOptions = require('../options/ConfigurableCompletionItemOptions');
 const ConfigurableCompletionItemProvider = require('../providers/ConfigurableCompletionItemProvider');
-const fileScheme = { scheme: 'file', language: 'html' };
+const ConfigurableReferenceOptions = require('../options/ConfigurableReferenceOptions');
+const ConfigurableReferenceProvider = require('../providers/ConfigurableReferenceProvider');
+const htmlFileScheme = { scheme: 'file', language: 'html' };
+const jsFileScheme = { scheme: 'file', language: 'javascript' };
 
 module.exports = class ProviderRegistry {
 
@@ -22,6 +25,12 @@ module.exports = class ProviderRegistry {
      */
     completionItemProviders = [];
 
+
+    /**
+     * @type {Array<ConfigurableReferenceProvider>}
+     */
+    referenceProviders = [];
+
     /**
      * @type {vscode.ExtensionContext|undefined} context
      */
@@ -38,9 +47,12 @@ module.exports = class ProviderRegistry {
 
         configurationRules.forEach(configurationRule => {
             const options = new ConfigurableCompletionItemOptions(configurationRule);
+            if (!options.enable) {
+                return;
+            }
             const provider = new ConfigurableCompletionItemProvider(options, this);
             this.completionItemProviders.push(provider);
-            const disposable = vscode.languages.registerCompletionItemProvider(fileScheme, provider, ...options.triggerCharacters);
+            const disposable = vscode.languages.registerCompletionItemProvider(htmlFileScheme, provider, ...options.triggerCharacters);
             this.disposables.set(provider, disposable);
             if (this.context) this.context.subscriptions.push(disposable);
         });
@@ -65,9 +77,34 @@ module.exports = class ProviderRegistry {
 
         configurationRules.forEach(configurationRule => {
             const options = new ConfigurableDefinitionOptions(configurationRule);
+            if (!options.enable) {
+                return;
+            }
             const provider = new ConfigurableDefinitionProvider(options);
             this.definitionProviders.push(provider);
-            const disposable = vscode.languages.registerDefinitionProvider(fileScheme, provider);
+            const disposable = vscode.languages.registerDefinitionProvider(htmlFileScheme, provider);
+            this.disposables.set(provider, disposable);
+            if (this.context) this.context.subscriptions.push(disposable);
+        });
+    }
+
+    /**
+     * @param {Array<any>} configurationRules
+     */
+    registerReferenceProviders(configurationRules) {
+
+        if (!configurationRules || !Array.isArray(configurationRules)) {
+            return;
+        }
+
+        configurationRules.forEach(configurationRule => {
+            const options = new ConfigurableReferenceOptions(configurationRule);
+            if (!options.enable) {
+                return;
+            }
+            const provider = new ConfigurableReferenceProvider(options);
+            this.referenceProviders.push(provider);
+            const disposable = vscode.languages.registerReferenceProvider(jsFileScheme, provider);
             this.disposables.set(provider, disposable);
             if (this.context) this.context.subscriptions.push(disposable);
         });
@@ -77,7 +114,7 @@ module.exports = class ProviderRegistry {
      * Removes all registered providers
      */
     clearAllProviders() {
-        const providers = [...this.completionItemProviders, ...this.definitionProviders];
+        const providers = [...this.completionItemProviders, ...this.definitionProviders, ...this.referenceProviders];
         providers.forEach(provider => {
             const disposable = this.disposables.get(provider);
             if (disposable) {
@@ -93,5 +130,6 @@ module.exports = class ProviderRegistry {
         this.disposables.clear();
         this.completionItemProviders = [];
         this.definitionProviders = [];
+        this.referenceProviders = [];
     }
 };

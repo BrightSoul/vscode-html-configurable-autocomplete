@@ -9,7 +9,7 @@ module.exports = class ConfigurableDefinitionOptions {
     enable = true;
 
     /**
-     * A regexp used to detect whether the cursor is on a definition. The first capture group, if present, will be used as the name of the definition otherwise the whole match is used. Required.
+     * A regexp used to detect whether the cursor is on a definition name. The first capture group, if present, will be used as the name of the definition otherwise the whole match is used. Required.
      * @type {RegExp}
      */
     definitionRegexp;
@@ -21,7 +21,7 @@ module.exports = class ConfigurableDefinitionOptions {
     includeGlobPattern;
 
     /**
-     * All files matching this glob pattern will be excluded from the scanning of definitions. Optional, defaults to '' (no files excluded). Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}.
+     * All files matching this glob pattern will be excluded from the scanning of definitions. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}. Optional, defaults to '' (no files excluded).
      * @type {string}
      */
     excludeGlobPattern = '';

@@ -46,13 +46,13 @@ module.exports = class ConfigurableCompletionItemOptions {
     itemKind = CompletionItemKind.Field;
 
     /**
-     * All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, no files will be scanned by default. If you set it, you must also set contentRegexp. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}.
+     * All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, no files will be scanned by default. If you set it, you must also set contentRegexp. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension} and (if you configured a definition provider) ${definitionDirName}, ${definitionDirPath}, ${definitionFilePath}, ${definitionFileName}, ${definitionFileNameWithoutExtension}.
      * @type {string|undefined}
      */
     includeGlobPattern;
 
     /**
-     * All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Optional, no files are excluded by default.
+     * All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension} and (if you configured a definition provider) ${definitionDirName}, ${definitionDirPath}, ${definitionFilePath}, ${definitionFileName}, ${definitionFileNameWithoutExtension}. Optional, no files are excluded by default.
      * @type {string|undefined}
      */
     excludeGlobPattern;

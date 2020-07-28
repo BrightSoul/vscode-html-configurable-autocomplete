@@ -35,7 +35,8 @@
 		"custom"
 	],
 	"activationEvents": [
-		"onLanguage:html"
+		"onLanguage:html",
+		"onLanguage:javascript"
 	],
 	"license": "MIT",
 	"main": "./extension.js",
@@ -51,10 +52,10 @@
 				"htmlConfigurableAutocomplete.completionItemProviders": {
 					"type": "array",
 					"default": [],
-					"description": "Configuration ruleset for the completion item provider",
+					"description": "Configuration ruleset for completion item providers",
 					"items": {
 						"type": "object",
-						"title": "Configuration rule for the completion item provider",
+						"title": "Configuration rule for a completion item provider",
 						"properties": {
 							"enable": {
 								"type": "boolean",
@@ -121,12 +122,12 @@
 							"includeGlobPattern": {
 								"type": "string",
 								"default": "",
-								"description": "All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, no files will be scanned by default. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
+								"description": "All files matching this glob pattern will be scanned for completion items. This pattern is relative to the workspace folder. Optional, no files will be scanned by default. If you set it, you must also set contentRegexp. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension} and (if you configured a definition provider) ${definitionDirName}, ${definitionDirPath}, ${definitionFilePath}, ${definitionFileName}, ${definitionFileNameWithoutExtension}."
 							},
 							"excludeGlobPattern": {
 								"type": "string",
 								"default": "",
-								"description": "All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Optional, no files will be excluded by default. Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
+								"description": "All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension} and (if you configured a definition provider) ${definitionDirName}, ${definitionDirPath}, ${definitionFilePath}, ${definitionFileName}, ${definitionFileNameWithoutExtension}. Optional, no files are excluded by default."
 							},
 							"contentRegexp": {
 								"type": "string",
@@ -144,10 +145,10 @@
 				"htmlConfigurableAutocomplete.definitionProviders": {
 					"type": "array",
 					"default": [],
-					"description": "Configuration ruleset for the definition provider",
+					"description": "Configuration ruleset for definition providers",
 					"items": {
 						"type": "object",
-						"title": "Configuration rule for the definition provider",
+						"title": "Configuration rule for a definition provider",
 						"properties": {
 							"enable": {
 								"type": "boolean",
@@ -170,6 +171,54 @@
 							"contentRegexp": {
 								"type": "string",
 								"description": "A regexp used to extract a definition name from content. The first capture group is used, if present, otherwise the whole match is used. If it's equal to the definitionRegexp match, then that location will open. Required."
+							}
+						}
+					}
+				},
+				"htmlConfigurableAutocomplete.referenceProviders": {
+					"type": "array",
+					"default": [],
+					"description": "Configuration ruleset for reference providers",
+					"items": {
+						"type": "object",
+						"title": "Configuration rule for a reference provider",
+						"properties": {
+							"enable": {
+								"type": "boolean",
+								"default": true,
+								"description": "Enable/disable this matching rule. Optional, defaults to true."
+							},
+							"referenceRegexp": {
+								"type": "string",
+								"description": "A regexp used to detect whether the cursor is on a name used to find references. The first capture group, if present, will be used as the name to find references otherwise the whole match is used. Required."
+							},
+							"includeGlobPattern": {
+								"type": "string",
+								"description": "All files matching this glob pattern will be scanned for references. Required. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
+							},				
+							"excludeGlobPattern": {
+								"type": "string",
+								"default": "",
+								"description": "All files matching this glob pattern will be excluded from the scanning of definitions. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}. Optional, defaults to '' (no files excluded)."
+							},					
+							"contentRegexp": {
+								"type": "string",
+								"description": "A regexp used to extract a reference from content. The first capture group is used, if present, otherwise the whole match is used. If it's equal to the referenceRegexp match, then that location will be suggested as a reference. Required."
+							},
+							"maxFiles": {
+								"type": "number",
+								"default": 50,
+								"description": "Maximum number of files to scan for references. Optional, defaults to 50."
+							},
+							"maxReferences": {
+								"type": "number",
+								"default": 50,
+								"description": "Maximum number of references provided. Optional, defaults to 50."
+							},
+							"maxReferencesPerFile": {
+								"type": "number",
+								"default": 50,
+								"description": "Maximum number of references provided by each file. Optional, defaults to 50."
 							}
 						}
 					}
