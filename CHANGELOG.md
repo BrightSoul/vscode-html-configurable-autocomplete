@@ -3,13 +3,13 @@
 
 ## [Unreleased]
 
-## [1.1.0] - 2017-07-29
+## [1.1.0] - 2020-07-29
 ### Added
  - Reference providers.
  - Support for `${definition...}` placeholders in glob patterns for completion item providers.
  - Hot configuration reload.
 
-## [1.0.0] - 2017-07-26
+## [1.0.0] - 2020-07-26
 ### Added
  - Completion item providers.
  - Definition providers.
