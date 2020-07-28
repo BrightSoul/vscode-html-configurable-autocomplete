@@ -6,8 +6,9 @@ module.exports = class PathProvider {
 	/**
 	 * @param {string|undefined} text
 	 * @param {vscode.TextDocument} document
+	 * @param {string|undefined} [prefix]
 	 */
-	static replacePathVariables(text, document) {
+	static replacePathVariables(text, document, prefix) {
 		if (!text) {
 			return undefined;
 		}
@@ -17,12 +18,13 @@ module.exports = class PathProvider {
 		}
 		const { dirName, dirPath, fileName, filePath, fileNameWithoutExtension } = PathProvider.getPaths(document.uri.fsPath, workspaceDir.uri.fsPath);
 
+		prefix = prefix || '';
 		return text
-				.replace('${dirName}', dirName)
-				.replace('${dirPath}', dirPath)
-				.replace('${filePath}', filePath)
-				.replace('${fileName}', fileName)
-				.replace('${fileNameWithoutExtension}', fileNameWithoutExtension);
+				.replace('${'+prefix+'dirName}', dirName)
+				.replace('${'+prefix+'dirPath}', dirPath)
+				.replace('${'+prefix+'filePath}', filePath)
+				.replace('${'+prefix+'fileName}', fileName)
+				.replace('${'+prefix+'fileNameWithoutExtension}', fileNameWithoutExtension);
 	}
 
     /**

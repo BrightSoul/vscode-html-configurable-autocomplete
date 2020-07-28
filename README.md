@@ -111,6 +111,13 @@ They support the following placeholders which will be replaced at runtime. Suppo
 * `${fileName}` is replaced with `MainLayout.html`;
 * `${fileNameWithoutExtension}` is replaced with `MainLayout`.
 
+Additionally, the following placeholders are also supported if you configured at least one definition provider which is matching code at the current cursor position. If a definition is found, its file path will be used to replace these placholders. Supposed a definition is found at `src/components/shared/LoadingIndicator.js`:
+* `${definitionDirName}` is replaced with `shared`;
+* `${definitionDirPath}` is replaced with `src/components/shared/`;
+* `${definitionFilePath}` is replaced with `src/components/shared/LoadingIndicator.js`;
+* `${definitionFileName}` is replaced with `LoadingIndicator.js`;
+* `${definitionFileNameWithoutExtension}` is replaced with `LoadingIndicator`.
+
 ## Known Issues
 
 Oh well, something could be improved...
@@ -121,9 +128,12 @@ Oh well, something could be improved...
 
 ## Release Notes
 
+### 1.1.0 (2020-07-27)
 
-### 1.0.0
+ - Added support for `${definition...}` placeholders in glob patterns.
+
+### 1.0.0 (2020-07-26)
 
 Initial release of these two features for HTML files:
- * Completion item providers;
- * Navigate to definition.
+ - Added completion item providers;
+ - Added definition providers.
