@@ -26,11 +26,13 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Can be omitted
       "enable": true,
       //It should be activated when < is pressed (for tag names)
-      "triggerCharacters": ["<"],
+      "triggerCharacters": [
+        "<"
+      ],
       //Then look into js files in the components directory
       "includeGlobPattern": "src/components/**/*.js",
       //Find the component name in there and show it as a completion item
-      "contentRegexp": "@Component\\(\\s*['\"]([a-z-]+)",
+      "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)",
       //It should have this icon
       "itemKind": "Constant"
     },
@@ -38,11 +40,16 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Can be omitted
       "enable": true,
       //It should also be activated when space is pressed (for attributes)
-      "triggerCharacters": [" "],
+      "triggerCharacters": [
+        " "
+      ],
       //But just when the cursor is in an element tag, at a position where an attribute name can be inserted
       "triggerRegexp": "<[a-z-]+(\\s+[a-z-]+(=\".*?\")?)*[^\"<>]*",
       //Show a couple statically-defined completion items
-      "staticItems": ["data-for", "data-if"],
+      "staticItems": [
+        "data-for",
+        "data-if"
+      ],
       //They should have this icon
       "itemKind": "Enum"
     },
@@ -50,7 +57,9 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Can be omitted
       "enable": true,
       //It should also be activated when space is pressed (for attributes)
-      "triggerCharacters": [" "],
+      "triggerCharacters": [
+        " "
+      ],
       //But just when the cursor is in an element tag, at a position where an attribute name can be inserted
       "triggerRegexp": "<[a-z-]+(\\s+[a-z-]+(=\".*?\")?)*[^\"<>]*",
       //Let's go look for this component definition and get its public fields (the definition is found thanks to the definition provider configured below)
@@ -64,7 +73,9 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Can be omitted
       "enable": true,
       //It should also be activated when { is pressed (for moustached syntax)
-      "triggerCharacters": ["{"],
+      "triggerCharacters": [
+        "{"
+      ],
       //But just when two { have been typed already
       "triggerRegexp": "{{",
       //Go look inside a js file that has the same name and lives in the same directory
@@ -82,12 +93,11 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Can be omitted
       "enable": true,
       //Definitions are provided when the cursor is on tag names having a - in them
-      //This is the definition provider that allows completion of its fields
       "definitionRegexp": "</?([a-z]+-[a-z]+)[^>]*",
       //Then go look inside js files that live in the components directory
       "includeGlobPattern": "src/components/**/*.js",
       //And find that very same tag name in them; if one is found, VSCode navigates to definition!
-      "contentRegexp": "@Component\\(\\s*['\"]([a-z-]+)"
+      "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)"
     },
     {
       //Can be omitted
@@ -98,6 +108,20 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       "includeGlobPattern": "${dirPath}${fileNameWithoutExtension}[.]js",
       //Then find the field it's referring to
       "contentRegexp": "^\\s*([a-z0-9_]+)\\s*;?\\s*$"
+    }
+  ],
+
+  //Tell it how to find references (i.e. usages) in the project
+  "htmlConfigurableAutocomplete.referenceProviders": [
+    {
+      //Can be omitted
+      "enable": true,
+      //Get the name of the component so we can find references in the project
+      "referenceRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)",
+      //Look for references inside HTML files
+      "includeGlobPattern": "src/components/**/*.html",
+      //References look like tag elements with a - in their name
+      "contentRegexp": "<([a-z]+-[a-z]+)"
     }
   ]
 }
