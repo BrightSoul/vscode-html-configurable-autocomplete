@@ -14,6 +14,6 @@
  - Completion item providers.
  - Definition providers.
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.1.0...v1.0.0
+[Unreleased]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.1.0...HEAD
+[1.1.0]: hhttps://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.1.0...v1.0.0
 [1.0.0]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/releases/tag/v1.0.0
