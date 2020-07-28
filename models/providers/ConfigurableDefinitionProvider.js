@@ -62,8 +62,8 @@ module.exports = class ConfigurableDefinitionProvider {
 	 */
 	async findDefinitionInFiles(definitionName, document, token) {
 
-		const includeGlobPattern = PathProvider.replacePathVariables(this.options.includeGlobPattern, document);
-		const excludeGlobPattern = PathProvider.replacePathVariables(this.options.excludeGlobPattern, document);
+		const includeGlobPattern = PathProvider.replaceDocumentPathVariables(this.options.includeGlobPattern, document);
+		const excludeGlobPattern = PathProvider.replaceDocumentPathVariables(this.options.excludeGlobPattern, document);
 		if (!includeGlobPattern) {
 			return;
 		}

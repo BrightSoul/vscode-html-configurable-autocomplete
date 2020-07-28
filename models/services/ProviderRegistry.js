@@ -5,7 +5,7 @@ const ConfigurableCompletionItemOptions = require('../options/ConfigurableComple
 const ConfigurableCompletionItemProvider = require('../providers/ConfigurableCompletionItemProvider');
 const fileScheme = { scheme: 'file', language: 'html' };
 
-class ProviderRegistry {
+module.exports = class ProviderRegistry {
 
     /**
      * @type {Map<any, vscode.Disposable>}
@@ -38,7 +38,7 @@ class ProviderRegistry {
 
         configurationRules.forEach(configurationRule => {
             const options = new ConfigurableCompletionItemOptions(configurationRule);
-            const provider = new ConfigurableCompletionItemProvider(options);
+            const provider = new ConfigurableCompletionItemProvider(options, this);
             this.completionItemProviders.push(provider);
             const disposable = vscode.languages.registerCompletionItemProvider(fileScheme, provider, ...options.triggerCharacters);
             this.disposables.set(provider, disposable);
@@ -95,5 +95,3 @@ class ProviderRegistry {
         this.definitionProviders = [];
     }
 };
-
-module.exports = new ProviderRegistry();

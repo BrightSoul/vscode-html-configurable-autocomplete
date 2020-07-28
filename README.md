@@ -27,7 +27,7 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       //Then look into js files in the components directory
       "includeGlobPattern": "src/components/**/*.js",
       //Find the component name in there and show it as a completion item
-      "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)",
+      "contentRegexp": "@Component\\(\\s*['\"]([a-z-]+)",
       //It should have this icon
       "itemKind": "Constant"
     },
@@ -46,29 +46,45 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
     {
       //Can be omitted
       "enable": true,
+      //It should also be activated when space is pressed (for attributes)
+      "triggerCharacters": [" "],
+      //But just when the cursor is in an element tag, at a position where an attribute name can be inserted
+      "triggerRegexp": "<[a-z-]+(\\s+[a-z-]+(=\".*?\")?)*[^\"<>]*",
+      //Let's go look for this component definition and get its public fields (the definition is found thanks to the definition provider configured below)
+      "includeGlobPattern": "${definitionFilePath}",
+      //And inside of it, look for fields (I know, I know, this should be less naive and maybe use a proper js parser, which maybe I'll implement soon)
+      "contentRegexp": "^\\s*([a-z0-9_]+)\\s*;?\\s*$",
+      //They should have this icon
+      "itemKind": "Field"
+    },
+    {
+      //Can be omitted
+      "enable": true,
       //It should also be activated when { is pressed (for moustached syntax)
       "triggerCharacters": ["{"],
       //But just when two { have been typed already
       "triggerRegexp": "{{",
       //Go look inside a js file that has the same name and lives in the same directory
       "includeGlobPattern": "${dirPath}${fileNameWithoutExtension}[.]js",
-      //And inside of it, look for fields (I know, I know, this should be more robust and maybe use a proper js parser)
+      //And inside of it, look for fields (again, it should use a less naive approach)
       "contentRegexp": "^\\s*([a-z0-9_]+)\\s*;?\\s*$",
       //It should have this icon
       "itemKind": "Field"
     }
   ],
+
   //Now tell it how to navigate to definitions
   "htmlConfigurableAutocomplete.definitionProviders": [
     {
       //Can be omitted
       "enable": true,
       //Definitions are provided when the cursor is on tag names having a - in them
-      "definitionRegexp": "</?([a-z]+-[a-z]+)",
+      //This is the definition provider that allows completion of its fields
+      "definitionRegexp": "</?([a-z]+-[a-z]+)[^>]*",
       //Then go look inside js files that live in the components directory
       "includeGlobPattern": "src/components/**/*.js",
       //And find that very same tag name in them; if one is found, VSCode navigates to definition!
-      "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)"
+      "contentRegexp": "@Component\\(\\s*['\"]([a-z-]+)"
     },
     {
       //Can be omitted
@@ -128,9 +144,10 @@ Oh well, something could be improved...
 
 ## Release Notes
 
-### 1.1.0 (2020-07-27)
+### 1.1.0 (2020-07-28)
 
- - Added support for `${definition...}` placeholders in glob patterns.
+ - Added support for `${definition...}` placeholders in glob patterns of completion item providers;
+ - Added support for hot configuration reload.
 
 ### 1.0.0 (2020-07-26)
 

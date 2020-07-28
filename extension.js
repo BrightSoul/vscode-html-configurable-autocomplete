@@ -1,8 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-const providerRegistry = require('./models/services/ProviderRegistry');
+const ProviderRegistry = require('./models/services/ProviderRegistry');
 const Logger = require('./models/services/Logger');
+const providerRegistry = new ProviderRegistry();
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -26,6 +27,9 @@ function onConfigurationChanged(event) {
 	registerProviders();
 }
 
+/**
+ * Registers all providers
+ */
 function registerProviders() {
 	const configuration = vscode.workspace.getConfiguration('htmlConfigurableAutocomplete');
 

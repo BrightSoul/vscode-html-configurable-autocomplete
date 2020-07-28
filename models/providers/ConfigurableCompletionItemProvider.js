@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const ConfigurableCompletionItemOptions = require('../options/ConfigurableCompletionItemOptions');
 const PathProvider = require('../services/PathProvider');
 const Logger = require('../services/Logger');
+const ProviderRegistry = require('../services/ProviderRegistry');
 
 module.exports = class ConfigurableCompletionItemProvider {
 
@@ -12,11 +13,18 @@ module.exports = class ConfigurableCompletionItemProvider {
 	options;
 
 	/**
+	 * @type {ProviderRegistry}
+	 */
+	providerRegistry;
+
+	/**
 	 * 
 	 * @param {ConfigurableCompletionItemOptions} options 
+	 * @param {ProviderRegistry} providerRegistry
 	 */
-	constructor(options) {
+	constructor(options, providerRegistry) {
 		this.options = options;
+		this.providerRegistry = providerRegistry;
 	}
 
 	/**
@@ -33,24 +41,13 @@ module.exports = class ConfigurableCompletionItemProvider {
 		}
 
 		const staticCompletionItems = this.getStaticCompletionItems();
-		const fileCompletionItems = await this.findCompletionItemsInFiles(document, token);
+		const fileCompletionItems = await this.findCompletionItemsInFiles(document, position, token);
 
 		if (token.isCancellationRequested) {
 			return;
 		}
 		return new vscode.CompletionList([...staticCompletionItems, ...fileCompletionItems]);
 	}
-
-	/**
-	 * 
-	 * @param {vscode.CompletionItem} item 
-	 * @param {vscode.CancellationToken} token 
-	 * @returns {vscode.ProviderResult<vscode.CompletionItem>}
-	 */
-	resolveCompletionItem(item, token) {
-		return;
-	}
-
 
 	/**
 	 * @param {vscode.TextDocument} document 
@@ -92,19 +89,22 @@ module.exports = class ConfigurableCompletionItemProvider {
 
 	/**
 	 * @param {vscode.TextDocument} document 
+	 * @param {vscode.Position} position 
 	 * @param {vscode.CancellationToken} token 
 	 * @return {Promise<Array<vscode.CompletionItem>>}
 	 */
-	async findCompletionItemsInFiles(document, token) {
+	async findCompletionItemsInFiles(document, position, token) {
 		if (!this.options.includeGlobPattern || !this.options.contentRegexp) {
 			return [];
 		}
 
-		const includeGlobPattern = PathProvider.replacePathVariables(this.options.includeGlobPattern, document);
-		const excludeGlobPattern = PathProvider.replacePathVariables(this.options.excludeGlobPattern, document);
+		const includeGlobPattern = await PathProvider.replaceAllPathVariables(this.options.includeGlobPattern, this.providerRegistry, document, position, token);
+		const excludeGlobPattern = await PathProvider.replaceAllPathVariables(this.options.excludeGlobPattern, this.providerRegistry, document, position, token);
+
 		if (!includeGlobPattern) {
 			return [];
 		}
+
 		const results = await vscode.workspace.findFiles(includeGlobPattern, excludeGlobPattern, this.options.maxFiles, token);
 		/**
 		 * @type {Array<vscode.CompletionItem>}

@@ -1,16 +1,31 @@
 const vscode = require('vscode');
 const path = require('path');
+const ProviderRegistry = require('./ProviderRegistry');
 
 module.exports = class PathProvider {
 
 	/**
 	 * @param {string|undefined} text
+	 * @param {ProviderRegistry} providerRegistry
 	 * @param {vscode.TextDocument} document
-	 * @param {string|undefined} [prefix]
+	 * @param {vscode.Position} position 
+	 * @param {vscode.CancellationToken} token 
+	 * @returns {Promise<string|undefined>}
 	 */
-	static replacePathVariables(text, document, prefix) {
+	static async replaceAllPathVariables(text, providerRegistry, document, position, token) {
+		text = this.replaceDocumentPathVariables(text, document);
+		text = await this.replaceDefinitionPathVariables(text, providerRegistry, document, position, token);
+		return text;
+	}
+
+	/**
+	 * @param {string|undefined} text
+	 * @param {vscode.TextDocument} document
+	 * @returns {string|undefined}
+	 */
+	static replaceDocumentPathVariables(text, document) {
 		if (!text) {
-			return undefined;
+			return text;
 		}
 		const workspaceDir = vscode.workspace.getWorkspaceFolder(document.uri);
 		if (!workspaceDir) {
@@ -18,13 +33,49 @@ module.exports = class PathProvider {
 		}
 		const { dirName, dirPath, fileName, filePath, fileNameWithoutExtension } = PathProvider.getPaths(document.uri.fsPath, workspaceDir.uri.fsPath);
 
-		prefix = prefix || '';
 		return text
-				.replace('${'+prefix+'dirName}', dirName)
-				.replace('${'+prefix+'dirPath}', dirPath)
-				.replace('${'+prefix+'filePath}', filePath)
-				.replace('${'+prefix+'fileName}', fileName)
-				.replace('${'+prefix+'fileNameWithoutExtension}', fileNameWithoutExtension);
+				.replace('${dirName}', dirName)
+				.replace('${dirPath}', dirPath)
+				.replace('${filePath}', filePath)
+				.replace('${fileName}', fileName)
+				.replace('${fileNameWithoutExtension}', fileNameWithoutExtension);
+	}
+
+	/**
+	 * @param {string|undefined} text
+	 * @param {ProviderRegistry} providerRegistry
+	 * @param {vscode.TextDocument} document
+	 * @param {vscode.Position} position 
+	 * @param {vscode.CancellationToken} token 
+	 * @returns {Promise<string|undefined>}
+	 */
+	static async replaceDefinitionPathVariables(text, providerRegistry, document, position, token) {
+		if (!text || !text.includes("${definition")) {
+			return text;
+		}
+		
+		if (providerRegistry.definitionProviders.length == 0) {
+			return text;
+		}
+
+		for (const provider of providerRegistry.definitionProviders) {
+			const location = await provider.provideDefinition(document, position, token);
+			if (location) {
+				const workspaceDir = vscode.workspace.getWorkspaceFolder(location.uri);
+				if (!workspaceDir) {
+					continue;
+				}
+				const { dirName, dirPath, fileName, filePath, fileNameWithoutExtension } = PathProvider.getPaths(location.uri.fsPath, workspaceDir.uri.fsPath);
+				return text
+						.replace('${definitionDirName}', dirName)
+						.replace('${definitionDirPath}', dirPath)
+						.replace('${definitionFilePath}', filePath)
+						.replace('${definitionFileName}', fileName)
+						.replace('${definitionFileNameWithoutExtension}', fileNameWithoutExtension);
+			}
+		}
+
+		return text;
 	}
 
     /**
