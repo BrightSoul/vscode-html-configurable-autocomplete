@@ -1,6 +1,7 @@
 const vscode = require('vscode')
 const fs = require('fs').promises
 const PathProvider = require('../services/PathProvider')
+const Transformer = require('../services/Transformer')
 const Logger = require('../services/Logger')
 
 module.exports = class ConfigurableCompletionItemProvider {
@@ -69,6 +70,8 @@ module.exports = class ConfigurableCompletionItemProvider {
       if (position.character >= match.index && position.character <= (match.index + match[0].length)) {
         // The cursor is inside a match, let's go ahead with completion
         return true
+      } else {
+        Logger.debug(`Completion item trigger regexp '${this.options.triggerRegexp.source}' matched '${match[0]}' but that match was discarded because the editor cursor was not placed inside that match`)
       }
     }
 
@@ -117,12 +120,13 @@ module.exports = class ConfigurableCompletionItemProvider {
           break
         }
         const content = await fs.readFile(result.fsPath)
-        const contentText = content.toString()
+        // TODO: use transformer name from options
+        const transformResult = Transformer.transformContent('es6-module-nodes', content.toString(), result.fsPath)
 
         let itemPerFileMaxCount = this.options.maxItemsPerFile
         let match
         const regexp = new RegExp(this.options.contentRegexp.source, this.options.contentRegexp.flags)
-        while ((match = regexp.exec(contentText)) && (itemPerFileMaxCount-- > 0) && (completionList.length <= this.options.maxItems)) {
+        while ((match = regexp.exec(transformResult.content)) && (itemPerFileMaxCount-- > 0) && (completionList.length <= this.options.maxItems)) {
           const itemText = match[1] || match[0]
           const item = new vscode.CompletionItem(itemText, this.options.itemKind)
           completionList.push(item)

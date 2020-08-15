@@ -134,7 +134,8 @@ No requirements.
 ## Extension Settings
 
 This extension contributes the following settings:
- * `htmlConfigurableAutocomplete.enable`: set to _false_ in case you want to disable the extension;
+ * `htmlConfigurableAutocomplete.enable`: default is _true_. Set to _false_ only if you want to disable this extension;
+ * `htmlConfigurableAutocomplete.debug`: set to _true_ for a more verbose logging. It will give you better visibility into regular expression matches and content transformation results;
  * `htmlConfigurableAutocomplete.completionItemProviders`: set rules for item completion (see the example above for details);
  * `htmlConfigurableAutocomplete.definitionProviders`: set rules for definitions  (see the example above for details).
  * `htmlConfigurableAutocomplete.referenceProviders`: set rules for references  (see the example above for details).
@@ -163,6 +164,11 @@ Additionally, the following placeholders are also supported for glob patterns of
  * `${definitionFileName}` is replaced with `LoadingIndicator.js`;
  * `${definitionFileNameWithoutExtension}` is replaced with `LoadingIndicator`.
 
+## Logging
+This extension will log debug, info, warning and error messages in a Visual Studio Code output channel named "HTML Configurable Autocomplete". These messages might help you understand how your rules are behaving, expecially if you set the `htmlConfigurableAutocomplete.debug` option to `true`.
+
+![log.png](log.png)
+
 ## Known Issues
 
 Oh well, some things could be improved...
@@ -170,6 +176,11 @@ Oh well, some things could be improved...
  * This version works with regular expressions so it doesn't offer any advanced, full-fledged JavaScript parser that could help you get completion items by descriptors in a js file.
 
 ## Release Notes
+
+### 1.2.0 (2020-08-xx)
+
+ - Added content and completion transformers
+ - Added debug mode.
 
 ### 1.1.0 (2020-07-29)
 

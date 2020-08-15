@@ -1,6 +1,7 @@
 const vscode = require('vscode')
 const PathProvider = require('../services/PathProvider')
 const Logger = require('../services/Logger')
+const Transformer = require('../services/Transformer')
 const fs = require('fs').promises
 
 module.exports = class ConfigurableReferenceProvider {
@@ -47,6 +48,8 @@ module.exports = class ConfigurableReferenceProvider {
       if (position.character >= match.index && position.character <= match.index + match[0].length) {
         const definitionName = match[1] || match[0]
         return definitionName
+      } else {
+        Logger.debug(`Reference regexp '${this.options.referenceRegexp.source}' matched '${match[0]}' but that match was discarded because the editor cursor was not placed inside that match`)
       }
     }
   }
@@ -84,20 +87,22 @@ module.exports = class ConfigurableReferenceProvider {
         break
       }
       const content = await fs.readFile(result.fsPath)
-      const textContent = content.toString()
+      // TODO: FROM OPTIONS
+      const transformResult = Transformer.transformContent('es6-module-nodes', content.toString(), result.fsPath)
+
       const regexp = new RegExp(this.options.contentRegexp.source, this.options.contentRegexp.flags)
       let match
       let referencesInFile = 0
-      while ((match = regexp.exec(textContent)) && referencesInFile <= this.options.maxReferencesPerFile) {
+      while ((match = regexp.exec(transformResult.content)) && referencesInFile <= this.options.maxReferencesPerFile) {
         const resultName = match[1] || match[0]
         if (resultName !== definitionName) {
           continue
         }
         // What line? What character?
-        const lines = textContent.substr(0, match.index).split('\n')
+        const lines = transformResult.content.substr(0, match.index).split('\n')
 
         const uri = vscode.Uri.file(result.fsPath)
-        const position = new vscode.Position(lines.length - 1, lines[lines.length - 1].length)
+        const position = transformResult.positionResolver(new vscode.Position(lines.length - 1, lines[lines.length - 1].length))
         const location = new vscode.Location(uri, position)
         locations.push(location)
         referencesInFile++

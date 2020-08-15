@@ -32,6 +32,7 @@ function onConfigurationChanged (event) {
  */
 function registerProviders () {
   const configuration = vscode.workspace.getConfiguration('htmlConfigurableAutocomplete')
+  Logger.setDebug(configuration.debug === true)
 
   providerRegistry.clearAllProviders()
 

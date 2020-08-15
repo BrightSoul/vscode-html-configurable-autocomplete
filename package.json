@@ -49,6 +49,11 @@
 					"default": true,
 					"description": "Enables the estension. Optional, default is true."
 				},
+				"htmlConfigurableAutocomplete.debug": {
+					"type": "boolean",
+					"default": false,
+					"description": "Set to true for a more verbose logging."
+				},
 				"htmlConfigurableAutocomplete.completionItemProviders": {
 					"type": "array",
 					"default": [],
@@ -234,12 +239,15 @@
 		"@types/jest": "^26.0.7",
 		"@types/node": "^13.11.0",
 		"@types/vscode": "^1.47.0",
-		"babel-eslint": "^10.1.0",
 		"eslint": "^6.8.0",
 		"glob": "^7.1.6",
 		"typescript": "^3.8.3"
 	},
 	"standard": {
 		"parser": "babel-eslint"
+	},
+	"dependencies": {
+		"@babel/types": "^7.11.0",
+		"babel-eslint": "^10.1.0"
 	}
 }
