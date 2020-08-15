@@ -1,7 +1,6 @@
-const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.referenceProviders:';
+const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.referenceProviders:'
 
 module.exports = class ConfigurableReferenceOptions {
-    
     /**
      * Enable/disable this matching rule. Optional, defaults to true.
      * @type {boolean}
@@ -51,7 +50,7 @@ module.exports = class ConfigurableReferenceOptions {
     maxReferencesPerFile = 50;
 
     /**
-     * 
+     *
      * @param {object} options
      * @param {boolean|undefined} [options.enable]
      * @param {string} [options.referenceRegexp]
@@ -62,17 +61,17 @@ module.exports = class ConfigurableReferenceOptions {
      * @param {number|null|undefined} [options.maxReferences]
      * @param {number|null|undefined} [options.maxReferencesPerFile]
      */
-    constructor({ enable, referenceRegexp, includeGlobPattern, excludeGlobPattern, contentRegexp, maxFiles, maxReferences: maxItems, maxReferencesPerFile: maxItemsPerFile }) {
-        this.enable = enable != null ? enable : this.enable;
-        this.referenceRegexp = new RegExp(referenceRegexp, 'gi');
-        this.contentRegexp = new RegExp(contentRegexp, 'gim');
-        if (!includeGlobPattern) {
-            throw `${errorPrefix} you must set includeGlobPattern because it's required`;
-        }
-        this.includeGlobPattern = includeGlobPattern;
-        this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern;
-        this.maxFiles = maxFiles || this.maxFiles;
-        this.maxReferences = maxItems || this.maxReferences;
-        this.maxReferencesPerFile = maxItemsPerFile || this.maxReferencesPerFile;
+    constructor ({ enable, referenceRegexp, includeGlobPattern, excludeGlobPattern, contentRegexp, maxFiles, maxReferences: maxItems, maxReferencesPerFile: maxItemsPerFile }) {
+      this.enable = enable != null ? enable : this.enable
+      this.referenceRegexp = new RegExp(referenceRegexp, 'gi')
+      this.contentRegexp = new RegExp(contentRegexp, 'gim')
+      if (!includeGlobPattern) {
+        throw new Error(`${errorPrefix} you must set includeGlobPattern because it's required`)
+      }
+      this.includeGlobPattern = includeGlobPattern
+      this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern
+      this.maxFiles = maxFiles || this.maxFiles
+      this.maxReferences = maxItems || this.maxReferences
+      this.maxReferencesPerFile = maxItemsPerFile || this.maxReferencesPerFile
     }
-};
+}

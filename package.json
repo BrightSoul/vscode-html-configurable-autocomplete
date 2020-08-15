@@ -15,8 +15,8 @@
 	},
 	"markdown": "github",
 	"repository": {
-		"type" : "git",
-		"url" : "https://github.com/BrightSoul/vscode-html-configurable-autocomplete.git"
+		"type": "git",
+		"url": "https://github.com/BrightSoul/vscode-html-configurable-autocomplete.git"
 	},
 	"bugs": {
 		"url": "https://github.com/BrightSoul/vscode-html-configurable-autocomplete.git"
@@ -195,12 +195,12 @@
 							"includeGlobPattern": {
 								"type": "string",
 								"description": "All files matching this glob pattern will be scanned for references. Required. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
-							},				
+							},
 							"excludeGlobPattern": {
 								"type": "string",
 								"default": "",
 								"description": "All files matching this glob pattern will be excluded from the scanning of definitions. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}. Optional, defaults to '' (no files excluded)."
-							},					
+							},
 							"contentRegexp": {
 								"type": "string",
 								"description": "A regexp used to extract a reference from content. The first capture group is used, if present, otherwise the whole match is used. If it's equal to the referenceRegexp match, then that location will be suggested as a reference. Required."
@@ -238,5 +238,8 @@
 		"eslint": "^6.8.0",
 		"glob": "^7.1.6",
 		"typescript": "^3.8.3"
+	},
+	"standard": {
+		"parser": "babel-eslint"
 	}
 }

@@ -1,8 +1,7 @@
-const { CompletionItemKind } = require('vscode');
-const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.completionItemProviders:';
+const { CompletionItemKind } = require('vscode')
+const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.completionItemProviders:'
 
 module.exports = class ConfigurableCompletionItemOptions {
-
     /**
      * Enable/disable this matching rule. Optional, defaults to true.
      * @type {boolean}
@@ -70,7 +69,7 @@ module.exports = class ConfigurableCompletionItemOptions {
     staticItems = [];
 
     /**
-     * 
+     *
      * @param {object} options
      * @param {boolean|null|undefined} [options.enable]
      * @param {Array<string>} [options.triggerCharacters]
@@ -84,58 +83,56 @@ module.exports = class ConfigurableCompletionItemOptions {
      * @param {string} [options.contentRegexp]
      * @param {Array<string>} [options.staticItems]
      */
-    constructor({enable, triggerCharacters, triggerRegexp, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, contentRegexp, staticItems}) {
+    constructor ({ enable, triggerCharacters, triggerRegexp, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, contentRegexp, staticItems }) {
+      if (!triggerCharacters || !Array.isArray(triggerCharacters) || triggerCharacters.length === 0) {
+        throw new Error(`${errorPrefix} triggerCharacters is a required option and it must define at least one character`)
+      }
+      if (triggerCharacters.find(char => char.length !== 1)) {
+        throw new Error(`${errorPrefix} each of triggerCharacters must be a string of length 1`)
+      }
+      this.triggerCharacters = triggerCharacters
+      this.enable = enable != null ? enable : this.enable
+      this.maxFiles = maxFiles || this.maxFiles
+      this.maxItems = maxItems || this.maxItems
+      this.maxItemsPerFile = maxItemsPerFile || this.maxItemsPerFile
+      this.includeGlobPattern = includeGlobPattern || this.includeGlobPattern
+      this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern
+      this.staticItems = staticItems && Array.isArray(staticItems) ? staticItems : this.staticItems
 
-        if (!triggerCharacters || !Array.isArray(triggerCharacters) || triggerCharacters.length == 0) {
-            throw `${errorPrefix} triggerCharacters is a required option and it must define at least one character`;
-        }
-        if (triggerCharacters.find(char => char.length != 1)) {
-            throw `${errorPrefix} each of triggerCharacters must be a string of length 1`;
-        }
-        this.triggerCharacters = triggerCharacters;
-        this.enable = enable != null ? enable : this.enable;
-        this.maxFiles = maxFiles || this.maxFiles;
-        this.maxItems = maxItems || this.maxItems;
-        this.maxItemsPerFile = maxItemsPerFile || this.maxItemsPerFile;
-        this.includeGlobPattern = includeGlobPattern || this.includeGlobPattern;
-        this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern;
-        this.staticItems = staticItems && Array.isArray(staticItems) ? staticItems : this.staticItems;
+      if (triggerRegexp) {
+        this.triggerRegexp = new RegExp(triggerRegexp, 'gi')
+      }
+      if (contentRegexp) {
+        this.contentRegexp = new RegExp(contentRegexp, 'gim')
+      }
 
-        if (triggerRegexp) {
-            this.triggerRegexp = new RegExp(triggerRegexp, 'gi');
+      if (itemKind) {
+        if (itemKind in CompletionItemKind) {
+          // @ts-ignore
+          this.itemKind = CompletionItemKind[itemKind]
+        } else {
+          throw new Error(`${errorPrefix} itemKind value '${itemKind}' is not allowed. It must be one of CompletionItemKind. See the documentation here: https://code.visualstudio.com/api/references/vscode-api#CompletionItemKind`)
         }
-        if (contentRegexp) {
-            this.contentRegexp = new RegExp(contentRegexp, 'gim');
-        }
+      }
 
-        if (itemKind) {
-            if (itemKind in CompletionItemKind) {
-                //@ts-ignore
-                this.itemKind = CompletionItemKind[itemKind];
-            } else {
-                throw `${errorPrefix} itemKind value '${itemKind}' is not allowed. It must be one of CompletionItemKind. See the documentation here: https://code.visualstudio.com/api/references/vscode-api#CompletionItemKind`;
-            }
-        }
+      if (this.maxFiles <= 0) {
+        throw new Error(`${errorPrefix} cannot set maxFiles to '${this.maxFiles}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`)
+      }
 
-        if (this.maxFiles <= 0) {
-            throw `${errorPrefix} cannot set maxFiles to '${this.maxFiles}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
-        }
+      if (this.maxItems <= 0) {
+        throw new Error(`${errorPrefix} cannot set maxItems to '${this.maxItems}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`)
+      }
 
-        if (this.maxItems <= 0) {
-            throw `${errorPrefix} cannot set maxItems to '${this.maxItems}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
-        }
+      if (this.maxItemsPerFile <= 0) {
+        throw new Error(`${errorPrefix} cannot set maxItemsPerFile to '${this.maxItemsPerFile}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`)
+      }
 
-        if (this.maxItemsPerFile <= 0) {
-            throw `${errorPrefix} cannot set maxItemsPerFile to '${this.maxItemsPerFile}' since it's less than or equal to 0. If you want to disable a rule, just set enabled: false.`;
-        }
+      if (!this.includeGlobPattern && this.staticItems.length === 0) {
+        throw new Error(`${errorPrefix} you must either provide a includeGlobPattern or provide at least one of staticItems for this rule to be meaningful. If you want to disable a rule, just set enabled: false.`)
+      }
 
-        if (!this.includeGlobPattern && this.staticItems.length == 0) {
-            throw `${errorPrefix} you must either provide a includeGlobPattern or provide at least one of staticItems for this rule to be meaningful. If you want to disable a rule, just set enabled: false.`;
-        }
-
-        if ((this.includeGlobPattern && !this.contentRegexp) || (this.contentRegexp && !this.includeGlobPattern)) {
-            throw `${errorPrefix} if you set includeGlobPattern, you must also set contentRegexp, otherwise the extension won\'t know how to extract completion items from files.`;
-        }
-        
+      if ((this.includeGlobPattern && !this.contentRegexp) || (this.contentRegexp && !this.includeGlobPattern)) {
+        throw new Error(`${errorPrefix} if you set includeGlobPattern, you must also set contentRegexp, otherwise the extension won't know how to extract completion items from files.`)
+      }
     }
-};
+}

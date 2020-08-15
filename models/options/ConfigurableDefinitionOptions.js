@@ -1,7 +1,6 @@
-const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.definitionProviders:';
+const errorPrefix = 'Error in configuration in htmlConfigurableAutocomplete.definitionProviders:'
 
 module.exports = class ConfigurableDefinitionOptions {
-    
     /**
      * Enable/disable this matching rule. Optional, defaults to true.
      * @type {boolean}
@@ -33,7 +32,7 @@ module.exports = class ConfigurableDefinitionOptions {
     contentRegexp;
 
     /**
-     * 
+     *
      * @param {object} options
      * @param {boolean|undefined} [options.enable]
      * @param {string} [options.definitionRegexp]
@@ -41,15 +40,14 @@ module.exports = class ConfigurableDefinitionOptions {
      * @param {string|undefined} [options.excludeGlobPattern]
      * @param {string} [options.contentRegexp]
      */
-    constructor({ enable, definitionRegexp, includeGlobPattern, excludeGlobPattern, contentRegexp }) {
-        this.enable = enable != null ? enable : this.enable;
-        this.definitionRegexp = new RegExp(definitionRegexp, 'gi');
-        this.contentRegexp = new RegExp(contentRegexp, 'gim');
-        if (!includeGlobPattern) {
-            throw `${errorPrefix} you must set includeGlobPattern because it's required`;
-        }
-        this.includeGlobPattern = includeGlobPattern;
-        this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern;
-
+    constructor ({ enable, definitionRegexp, includeGlobPattern, excludeGlobPattern, contentRegexp }) {
+      this.enable = enable != null ? enable : this.enable
+      this.definitionRegexp = new RegExp(definitionRegexp, 'gi')
+      this.contentRegexp = new RegExp(contentRegexp, 'gim')
+      if (!includeGlobPattern) {
+        throw new Error(`${errorPrefix} you must set includeGlobPattern because it's required`)
+      }
+      this.includeGlobPattern = includeGlobPattern
+      this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern
     }
-};
+}
