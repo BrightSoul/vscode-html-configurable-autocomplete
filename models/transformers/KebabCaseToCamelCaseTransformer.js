@@ -2,20 +2,20 @@ const Logger = require('../services/Logger')
 const TransformResult = require('./TransformResult')
 const formatConverter = require('../services/FormatConverter')
 
-module.exports = class CamelCaseToKebabCaseTransformer {
+module.exports = class KebabCaseToCamelCaseTransformer {
   /**
-   * Transforms content from camel case to kebab case
+   * Transforms content from kebab case to camel case
    * @param {string} content
    * @param {string|undefined} [origin]
    * @returns {TransformResult}
    */
   static transformContent (content, origin) {
     if (!content) {
-      Logger.debug(`Could not transform empty content from '${origin}' from camel case to kebab case`)
+      Logger.debug(`Could not transform empty content from '${origin}' from kebab case to camel case`)
       return new TransformResult(content)
     }
 
-    const transformedContent = formatConverter.camelCaseToKebabCase(content)
+    const transformedContent = formatConverter.kebabCaseToCamelCase(content)
     return new TransformResult(transformedContent)
   }
 }

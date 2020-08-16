@@ -3,9 +3,9 @@
 
 ## Features
 This extension provides:
- * _completion items_ when you type specific character(s). They are registered for HTML files;
- * _navigate to definitions_ of components. They are registered for HTML files;
- * _find references_ of a component. They are registered for JavaScript files.
+ * _completion items_ when you type specific character(s). They are enabled for HTML files;
+ * _navigate to definitions_ of components. They are enabled for HTML files;
+ * _find references_ of a component. They are enabled for JavaScript files.
 
 ![completion.gif](completion.gif)
 
@@ -19,6 +19,9 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
 {
   //Enable the extension (it can be omitted)
   "htmlConfigurableAutocomplete.enable": true,
+
+  //Enable debug (more verbose logging but just if you need to diagnose transformers or regexp behavior)
+  "htmlConfigurableAutocomplete.debug": true,
 
   //Tell it how to autocomplete HTML content
   "htmlConfigurableAutocomplete.completionItemProviders": [
@@ -140,15 +143,15 @@ This extension contributes the following settings:
  * `htmlConfigurableAutocomplete.definitionProviders`: set rules for definitions  (see the example above for details).
  * `htmlConfigurableAutocomplete.referenceProviders`: set rules for references  (see the example above for details).
 
-> **Important** This extension supports hot configuration reload so any change will be immediately applied. No need to restart VSCode. If something's not working, check the output channel "HTML Configurable Autocomplete" because you might find helpful messages there (e.g. an invalid regexp which is breaking the provider).
+> **Important** This extension supports hot configuration reload so any change will be immediately applied. No need to restart VSCode. If something's not working, check the output channel "HTML Configurable Autocomplete" because you might find helpful messages there (e.g. an invalid regexp which is breaking the provider). Enable more verbose logging by setting `htmlConfigurableAutocomplete.debug` to `true`.
 
 The following configuration keys indicate glob patterns:
- * `htmlConfigurableAutocomplete.completionItemProviders.includeGlobPattern`;
- * `htmlConfigurableAutocomplete.completionItemProviders.excludeGlobPattern`; 
- * `htmlConfigurableAutocomplete.definitionProviders.includeGlobPattern`;
- * `htmlConfigurableAutocomplete.definitionProviders.excludeGlobPattern`;
- * `htmlConfigurableAutocomplete.referenceProviders.includeGlobPattern`;
- * `htmlConfigurableAutocomplete.referenceProviders.excludeGlobPattern`.
+ * `htmlConfigurableAutocomplete.completionItemProviders[].includeGlobPattern`;
+ * `htmlConfigurableAutocomplete.completionItemProviders[].excludeGlobPattern`; 
+ * `htmlConfigurableAutocomplete.definitionProviders[].includeGlobPattern`;
+ * `htmlConfigurableAutocomplete.definitionProviders[].excludeGlobPattern`;
+ * `htmlConfigurableAutocomplete.referenceProviders[].includeGlobPattern`;
+ * `htmlConfigurableAutocomplete.referenceProviders[].excludeGlobPattern`.
 
 They support the following placeholders which will be replaced at runtime. Suppose the user has the editor opened on `src/components/layout/MainLayout.html`:
  * `${dirName}` is replaced with `layout`;
@@ -163,6 +166,97 @@ Additionally, the following placeholders are also supported for glob patterns of
  * `${definitionFilePath}` is replaced with `src/components/shared/LoadingIndicator.js`;
  * `${definitionFileName}` is replaced with `LoadingIndicator.js`;
  * `${definitionFileNameWithoutExtension}` is replaced with `LoadingIndicator`.
+
+## Transformers
+Using regular expressions on JavaScript files might yield imprecise results. For instance, suppose you wanted to find all properties in a ES6 class like this.
+```
+export default class Foo {
+  loading
+  animating
+  
+  load () {
+    if (loading) {
+      return
+    }
+    this.loading = true
+    console.log('loading started')
+  }
+}
+```
+If you wrote a regular expression like `^\s*([a-z0-9_]+)\s*$`, it would correctly match `loading` and `animating`, which is the two properties we are looking for, but it would also match `return` which is obviously not a property.
+
+By using transformers this extension can pre-process content before a regular expression is executed. For instance, by using the `es6-module-nodes` transformer, the previous ES6 class would be transformed like so:
+```
+0,15 default class Foo  
+1,4 default class Foo  instance public property loading 
+2,4 default class Foo  instance public property animating 
+4,4 default class Foo  instance public method load 
+``` 
+As you can see, each line represents a class definition or a member of that class and its position in the original file. In this way, it becomes way easier to write a regular expression that matches all properties: `instance public property ([a-z0-9_]+)`
+
+Heres a list of the available transformers.
+
+#### es6-module-nodes
+Internally uses `babel-eslint` to create a textual representation of a ES6 class that's easier for regexp to work on.
+
+It can be used for the following settings:
+ * `htmlConfigurableAutocomplete.completionItemProviders[].contentTransformer`
+ * `htmlConfigurableAutocomplete.definitionProviders[].contentTransformer`
+ * `htmlConfigurableAutocomplete.referenceProviders[].contentTransformer`
+
+Here's a more complete example. The following ES6 class:
+```
+@Fizz @Buzz
+class Foo {
+  #loading
+
+  @Bindable
+  animating
+  
+  @Handler
+  load () {
+    if (loading) {
+      return
+    }
+    this.loading = true
+    console.log('loading started')
+  }
+  static configure() {
+    void(0)
+  }
+  get percent() {
+    return Math.random()
+  }
+  set visibile(value) {
+    void(value)
+  }
+}
+export default Foo
+```
+It's going to be transformed to
+```
+0,0 default class Foo @Fizz,@Buzz
+2,4 default class Foo @Fizz,@Buzz instance private property loading 
+4,4 default class Foo @Fizz,@Buzz instance public property animating @Bindable
+7,4 default class Foo @Fizz,@Buzz instance public method load @Handler
+15,4 default class Foo @Fizz,@Buzz static public method configure 
+18,4 default class Foo @Fizz,@Buzz instance public get percent 
+21,4 default class Foo @Fizz,@Buzz instance public set visibile 
+```
+Class info is repeated for each of its members. Zero-based position (line, column) where the original defintion was found is placed at the beginning of each line.
+
+#### camelcase-to-kebabcase
+Simply transforms a `camelCase` string into `kebab-case`.
+
+It can be used for the following settings:
+ * `htmlConfigurableAutocomplete.completionItemProviders[].completionItemTransformer`;
+
+#### kebabcase-to-camelcase
+Simply transforms a `kebab-case` string into `camelCase`.
+
+It can be used for the following settings:
+ * `htmlConfigurableAutocomplete.definitionProviders[].definitionTransformer`;
+
 
 ## Logging
 This extension will log debug, info, warning and error messages in a Visual Studio Code output channel named "HTML Configurable Autocomplete". These messages might help you understand how your rules are behaving, expecially if you set the `htmlConfigurableAutocomplete.debug` option to `true`.

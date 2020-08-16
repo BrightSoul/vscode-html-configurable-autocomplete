@@ -80,16 +80,18 @@ function generateOutputForNode (node, allNodes, outputs) {
       let exportName = ''
       const defaultExport = allNodes.find(n => n.type === 'ExportDefaultDeclaration' && (
         (n.declaration.type === 'Identifier' && n.declaration.name === className) ||
-        (n.declaration.type === 'ClassDeclaration' && ((n.declaration.id && n.declaration.id.name === className) || (n.declaration == node)))
+        (n.declaration.type === 'ClassDeclaration' && ((n.declaration.id && n.declaration.id.name === className) || (n.declaration === node)))
       ))
       if (defaultExport) {
         exportName = 'default'
       } else {
         allNodes.find(n => n.type === 'ExportNamedDeclaration' &&
-          n.declaration && n.declaration.type === 'VariableDeclaration' && n.declaration.declarations.length !== 0 && n.declaration.declarations[0].init && n.declaration.declarations[0].init.type === 'ClassExpression' && ((n.declaration.declarations[0].init.id && n.declaration.declarations[0].init.id.name === className) || n.declaration.declarations[0].init === node) && n.declaration.declarations[0].id.type === 'Identifier' &&
-          (exportName = n.declaration.declarations[0].id.name))
+          n.declaration && n.declaration.type === 'VariableDeclaration' && n.declaration.declarations.length !== 0 && n.declaration.declarations[0].init &&
+          ((n.declaration.declarations[0].init.type === 'ClassExpression' && ((n.declaration.declarations[0].init.id && n.declaration.declarations[0].init.id.name === className) || n.declaration.declarations[0].init === node)) ||
+          (n.declaration.declarations[0].init.type === 'Identifier' && n.declaration.declarations[0].init.name === className)) &&
+          (n.declaration.declarations[0].id.type === 'Identifier' && (exportName = n.declaration.declarations[0].id.name)))
       }
-      return [`${coordinates} class ${className}${superClassName} ${decoratorNames} ${exportName}`]
+      return [`${coordinates} ${exportName} class ${className}${superClassName} ${decoratorNames}`]
     }
     case 'ClassProperty': {
       const publicPropertyType = node.static ? 'static' : 'instance'
@@ -100,7 +102,7 @@ function generateOutputForNode (node, allNodes, outputs) {
       const privatePropertyName = node.key.id.name
       return [`${coordinates} ${getParentClassOutput(node, outputs)} instance private property ${privatePropertyName} ${decoratorNames}`]
     }
-    //@ts-ignore
+    // @ts-ignore
     case 'MethodDefinition':
     case 'ClassMethod': {
       const methodAccessor = node.static ? 'static' : 'instance'
