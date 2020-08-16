@@ -23,7 +23,7 @@ module.exports = class Es6ModuleNodesTransformer {
       return new TransformResult(transformedContent, Es6ModuleNodesTransformer.positionResolver)
     } catch (error) {
       Logger.debug(`Could not extract tokens from ES6 Module '${origin || content}' because: ${error}`)
-      return new TransformResult(content)
+      return new TransformResult('')
     }
   }
 

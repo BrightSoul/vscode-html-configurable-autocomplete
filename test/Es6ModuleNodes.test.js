@@ -71,3 +71,31 @@ it('should output not exported class', () => {
   expect(actualOutput).toBe(expectedOutput)
 
 });
+
+it('should output class properties', () => {
+  //Arrange
+  const content = "export default class Foo {\nbar\n}";
+  const node = parse(content, config);
+  const expectedOutput = '0,15 class Foo  default\n1,0 class Foo  default instance property bar';
+  
+  //Act
+  const actualOutput = formatter.formatNodes(node)
+
+  //Assert
+  expect(actualOutput).toBe(expectedOutput)
+
+});
+
+it('should output const export anynomous class and property', () => {
+  //Arrange
+  const content = "export const fizz = class {\nbar\n}";
+  const node = parse(content, config);
+  const expectedOutput = '0,20 class   fizz\n1,0 class   fizz instance property bar';
+  
+  //Act
+  const actualOutput = formatter.formatNodes(node)
+
+  //Assert
+  expect(actualOutput).toBe(expectedOutput)
+
+});

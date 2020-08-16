@@ -19,11 +19,19 @@ function visitNodes(nodes, output) {
     }
     visitedNodes.push(node);
     const childNodes = extractChildNodesFromNode(node)
-    nodes.push(...childNodes)
+    for (const childNode of childNodes) {
+      Object.defineProperty(childNode, '_parent', { writable: false, value: node })
+      nodes.push(childNode)
+    }
   }
+  /**
+   * @type {WeakMap<import("@babel/types").Node, Array<string>>} outputs
+   */
+  const outputs = new WeakMap();
 
   for(const node of visitedNodes) {
-    const nodeOutput = generateOutputForNode(node, visitedNodes)
+    const nodeOutput = generateOutputForNode(node, visitedNodes, outputs)
+    outputs.set(node, nodeOutput)
     output.push(...nodeOutput)
   }
   return output
@@ -44,7 +52,10 @@ function extractChildNodesFromNode(node) {
     case 'VariableDeclaration':
       return node.declarations;
     case 'VariableDeclarator':
-      return node.init ? [node.init] : [];
+      return node.init ? [node.init] : []
+    case 'ClassExpression':
+    case 'ClassDeclaration':
+      return node.body.type == 'ClassBody' ? node.body.body : []
     default:
       return []
   }
@@ -53,9 +64,12 @@ function extractChildNodesFromNode(node) {
 /**
  * @param {import("@babel/types").Node} node
  * @param {Array<import("@babel/types").Node>} allNodes
+ * @param {WeakMap<import("@babel/types").Node, Array<string>>} outputs
  * @return {Array<string>}
  */
-function generateOutputForNode(node, allNodes) {
+function generateOutputForNode(node, allNodes, outputs) {
+  const coordinates = getCoordinatesForNode(node)
+
   switch(node.type) {
     case 'ClassDeclaration':
     case 'ClassExpression':
@@ -63,7 +77,6 @@ function generateOutputForNode(node, allNodes) {
       const className = classDeclaration.id ? classDeclaration.id.name : '';
       const superClassName = classDeclaration.superClass != null && classDeclaration.superClass.type === 'Identifier' ? (':' + /** @type {import("@babel/types").Identifier} */ (classDeclaration.superClass).name) : ''
       const decoratorNames = (classDeclaration.decorators||[]).filter(d => d.expression.type === 'Identifier').map(d => '@' + /** @type {import("@babel/types").Identifier} */ (d.expression).name).join(',')
-      const coordinates = getCoordinatesForNode(node)
       let exportName = '';
       const defaultExport = allNodes.find(n => n.type === 'ExportDefaultDeclaration' && (
           (n.declaration.type === 'Identifier' && n.declaration.name === className) ||
@@ -77,6 +90,19 @@ function generateOutputForNode(node, allNodes) {
           && (exportName = n.declaration.declarations[0].id.name))
       }
       return [`${coordinates} class ${className}${superClassName} ${decoratorNames} ${exportName}`]
+    case 'ClassProperty':
+      const nodeParent = getNodeParent(node);
+      let parentClassOutput = '';
+      if (nodeParent) {
+        const parentOutput = outputs.get(nodeParent)
+        if (parentOutput && parentOutput.length > 0) {
+          parentClassOutput = stripCoordinates(parentOutput[0])
+        }
+      }
+      const propertyType = 'instance' //TODO: fix here
+      const propertyKind = 'property'
+      const propertyName = node.key.type == 'Identifier' ? node.key.name : ''
+      return [`${coordinates} ${parentClassOutput} ${propertyType} ${propertyKind} ${propertyName}`]
     default:
       return []
   }
@@ -89,6 +115,29 @@ function generateOutputForNode(node, allNodes) {
  */
 function getCoordinatesForNode(node) {
   return node.loc && node.loc.start ? `${node.loc.start.line-1},${node.loc.start.column}` : ''
+}
+
+/**
+ * 
+ * @param {import("@babel/types").Node} node 
+ * @return {import("@babel/types").Node|undefined}
+ */
+function getNodeParent(node) {
+  if ('_parent' in node) {
+    return node['_parent']
+  }
+  return undefined
+}
+
+
+/**
+ * 
+ * @param {string} content
+ * @return {string}
+ */
+function stripCoordinates(content) {
+  const spacePosition = content.indexOf(' ')
+  return content.substr(spacePosition+1)
 }
 
 module.exports = class NodesFormatter {
