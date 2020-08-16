@@ -1,18 +1,19 @@
 const parse = require('babel-eslint/lib/parse')
 const Logger = require('../services/Logger')
 const TransformResult = require('./TransformResult')
-const NodesFormatter = require('../services/NodesFormatter');
+const NodesFormatter = require('../services/NodesFormatter')
 const vscode = require('vscode')
 
 module.exports = class Es6ModuleNodesTransformer {
   /**
    * Transforms content by extracting tokens from ES6 modules
    * @param {string} content
-   * @param {string|undefined} origin
+   * @param {string|undefined} [origin]
    * @returns {TransformResult}
    */
   static transformContent (content, origin) {
     if (!content) {
+      Logger.debug(`Could not extract module nodes from empty content from '${origin}'`)
       return new TransformResult(content)
     }
 

@@ -1,12 +1,14 @@
 const Logger = require('./Logger')
 const Es6ModuleNodesTransformer = require('../transformers/Es6ModuleNodesTransformer')
+const CamelCaseToKebabCaseTransformer = require('../transformers/CamelCaseToKebabCaseTransformer')
 const TransformResult = require('../transformers/TransformResult')
 
 /**
  * @type {Object.<string, {transformContent: (content: string, origin: string|undefined) => TransformResult}>}
  */
 const transformerMap = {
-  'es6-module-nodes': Es6ModuleNodesTransformer
+  'es6-module-nodes': Es6ModuleNodesTransformer,
+  'camelcase-to-kebabcase': CamelCaseToKebabCaseTransformer
 }
 
 module.exports = class Transformer {
