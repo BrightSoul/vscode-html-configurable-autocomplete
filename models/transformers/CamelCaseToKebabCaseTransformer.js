@@ -15,7 +15,7 @@ module.exports = class CamelCaseToKebabCaseTransformer {
       return new TransformResult(content)
     }
 
-    const transformedContent = formatConverter.camelCaseToKebabCase(content);
+    const transformedContent = formatConverter.camelCaseToKebabCase(content)
     return new TransformResult(transformedContent)
   }
 }

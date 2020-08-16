@@ -4,6 +4,6 @@ module.exports = class FormatConverter {
    * @return {string}
    */
   static camelCaseToKebabCase (input) {
-    return (input || '').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+    return (input || '').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
   }
 }
