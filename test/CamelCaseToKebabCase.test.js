@@ -19,6 +19,6 @@ it('should convert camel case to kebab case', () => {
   for (const content in data) {
     const actualResult = converter.camelCaseToKebabCase(content);
     const expectedResult = data[content];
-    expect(expectedResult).toBe(actualResult);
+    expect(actualResult).toBe(expectedResult);
   }
 });
