@@ -233,7 +233,7 @@
 	},
 	"scripts": {
 		"lint": "eslint .",
-		"test": "jest test"
+		"test": "jest"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",

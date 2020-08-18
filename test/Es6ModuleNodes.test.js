@@ -224,3 +224,55 @@ it('should output class and method with decorators', () => {
   // Assert
   expect(actualOutput).toBe(expectedOutput)
 })
+
+it('should output default export class with module exports', () => {
+  // Arrange
+  const content = 'module.exports = class Foo {}'
+  const node = parse(content, config)
+  const expectedOutput = '0,17 default class Foo '
+
+  // Act
+  const actualOutput = formatter.formatNodes(node)
+
+  // Assert
+  expect(actualOutput).toBe(expectedOutput)
+})
+
+it('should output named export class with module exports', () => {
+  // Arrange
+  const content = 'module.exports = { bar: class Foo {} }'
+  const node = parse(content, config)
+  const expectedOutput = '0,24 bar class Foo '
+
+  // Act
+  const actualOutput = formatter.formatNodes(node)
+
+  // Assert
+  expect(actualOutput).toBe(expectedOutput)
+})
+
+it('should output named export class with module exports by identifier', () => {
+  // Arrange
+  const content = 'class Foo {}\nmodule.exports = { bar: Foo }'
+  const node = parse(content, config)
+  const expectedOutput = '0,0 bar class Foo '
+
+  // Act
+  const actualOutput = formatter.formatNodes(node)
+
+  // Assert
+  expect(actualOutput).toBe(expectedOutput)
+})
+
+it('should output named export class with module exports by implicit identifier', () => {
+  // Arrange
+  const content = 'class Foo {}\nmodule.exports = { Foo }'
+  const node = parse(content, config)
+  const expectedOutput = '0,0 Foo class Foo '
+
+  // Act
+  const actualOutput = formatter.formatNodes(node)
+
+  // Assert
+  expect(actualOutput).toBe(expectedOutput)
+})
