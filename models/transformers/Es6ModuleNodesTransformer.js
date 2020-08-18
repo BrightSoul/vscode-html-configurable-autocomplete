@@ -13,16 +13,16 @@ module.exports = class Es6ModuleNodesTransformer {
    */
   static transformContent (content, origin) {
     if (!content) {
-      Logger.debug(`Could not extract module nodes from empty content from '${origin}'`)
+      Logger.debug(`Could not extract module nodes from empty content from ${origin}`)
       return new TransformResult(content)
     }
 
     try {
       const file = parse(content, { ecmaVersion: 2020, sourceType: 'module' })
-      const transformedContent = NodesFormatter.formatNodes(file.program.body)
+      const transformedContent = NodesFormatter.formatNodes(file)
       return new TransformResult(transformedContent, Es6ModuleNodesTransformer.positionResolver)
     } catch (error) {
-      Logger.debug(`Could not extract tokens from ES6 Module '${origin || content}' because: ${error}`)
+      Logger.debug(`Could not extract tokens from ES6 Module ${origin || content} because: ${error}`)
       return new TransformResult('')
     }
   }

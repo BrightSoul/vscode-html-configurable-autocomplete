@@ -11,6 +11,9 @@ module.exports = class Logger {
    */
   static setDebug (value) {
     isDebug = value
+    if (isDebug) {
+      Logger.debug("Verbose logging enabled")
+    }
   }
 
   /**

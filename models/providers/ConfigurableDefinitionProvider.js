@@ -46,7 +46,8 @@ module.exports = class ConfigurableDefinitionProvider {
     while ((match = regexp.exec(currentLine.text))) {
       if (position.character >= match.index && position.character <= match.index + match[0].length) {
         const definitionName = match[1] || match[0]
-        return definitionName
+        const transformedDefinitionName = Transformer.transformContent(this.options.definitionTransformer, definitionName, currentLine.text)
+        return transformedDefinitionName.content
       } else {
         Logger.debug(`Definition regexp '${this.options.definitionRegexp.source}' matched '${match[0]}' but that match was discarded because the editor cursor was not placed inside that match`)
       }
@@ -69,7 +70,7 @@ module.exports = class ConfigurableDefinitionProvider {
     const results = await vscode.workspace.findFiles(includeGlobPattern, excludeGlobPattern, undefined, token)
 
     if (results.length === 0) {
-      Logger.warn(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in definition provider rule with definition regexp ${this.options.definitionRegexp}`)
+      Logger.debug(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in definition provider rule with definition regexp ${this.options.definitionRegexp}`)
       return
     }
 
@@ -78,8 +79,7 @@ module.exports = class ConfigurableDefinitionProvider {
         return
       }
       const content = await fs.readFile(result.fsPath)
-      // TODO: FROM OPTIONS
-      const transformResult = Transformer.transformContent('es6-module-nodes', content.toString(), result.fsPath)
+      const transformResult = Transformer.transformContent(this.options.contentTransformer, content.toString(), result.fsPath)
 
       const regexp = new RegExp(this.options.contentRegexp.source, this.options.contentRegexp.flags)
       let match

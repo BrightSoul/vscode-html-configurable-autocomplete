@@ -70,7 +70,7 @@ module.exports = class ConfigurableReferenceProvider {
     const results = await vscode.workspace.findFiles(includeGlobPattern, excludeGlobPattern, this.options.maxFiles, token)
 
     if (results.length === 0) {
-      Logger.warn(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in reference provider rule with reference regexp ${this.options.referenceRegexp}`)
+      Logger.debug(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in reference provider rule with reference regexp ${this.options.referenceRegexp}`)
       return
     }
 
@@ -87,8 +87,8 @@ module.exports = class ConfigurableReferenceProvider {
         break
       }
       const content = await fs.readFile(result.fsPath)
-      // TODO: FROM OPTIONS
-      const transformResult = Transformer.transformContent('es6-module-nodes', content.toString(), result.fsPath)
+      //Transformers currently not supported in reference providers
+      const transformResult = Transformer.transformContent('', content.toString(), result.fsPath)
 
       const regexp = new RegExp(this.options.contentRegexp.source, this.options.contentRegexp.flags)
       let match

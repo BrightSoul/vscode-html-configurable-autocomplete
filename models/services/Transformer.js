@@ -29,7 +29,7 @@ module.exports = class Transformer {
     }
     const transformer = transformerMap[transformerName]
     const transformedContent = transformer.transformContent(content, origin)
-    Logger.debug(`Content from '${origin || content}' was transformed to:\n${transformedContent.content}`)
+    Logger.debug(`Content from ${origin || content} was transformed to:\n${transformedContent.content}`)
     return transformedContent
   }
 }

@@ -57,6 +57,18 @@ module.exports = class ConfigurableCompletionItemOptions {
     excludeGlobPattern;
 
     /**
+     * This transformer will transform the contentRegexp matched text. The transformed text will be displayed as the completion item to the user. Optional. Default is no transformer.
+     * @type {string|undefined}
+     */
+    completionItemTransformer = '';
+
+    /**
+     * This transformer will will transform file content before the contentRegexp is executed. Optional. Default is no transformer.
+     * @type {string|undefined}
+     */
+    contentTransformer = '';
+
+    /**
      * A regexp used to extract completion items from content. The first capture group will be used, if present, otherwise the whole match is used. Optional. If you set it, you must also set includeGlobPattern.
      * @type {RegExp|undefined}
      */
@@ -80,10 +92,12 @@ module.exports = class ConfigurableCompletionItemOptions {
      * @param {string|undefined} [options.itemKind]
      * @param {string|null|undefined} [options.includeGlobPattern]
      * @param {string|null|undefined} [options.excludeGlobPattern]
+     * @param {string|null|undefined} [options.completionItemTransformer]
+     * @param {string|null|undefined} [options.contentTransformer]
      * @param {string} [options.contentRegexp]
      * @param {Array<string>} [options.staticItems]
      */
-    constructor ({ enable, triggerCharacters, triggerRegexp, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, contentRegexp, staticItems }) {
+    constructor ({ enable, triggerCharacters, triggerRegexp, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, completionItemTransformer, contentTransformer, contentRegexp, staticItems }) {
       if (!triggerCharacters || !Array.isArray(triggerCharacters) || triggerCharacters.length === 0) {
         throw new Error(`${errorPrefix} triggerCharacters is a required option and it must define at least one character`)
       }
@@ -98,6 +112,8 @@ module.exports = class ConfigurableCompletionItemOptions {
       this.includeGlobPattern = includeGlobPattern || this.includeGlobPattern
       this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern
       this.staticItems = staticItems && Array.isArray(staticItems) ? staticItems : this.staticItems
+      this.completionItemTransformer = completionItemTransformer || this.completionItemTransformer
+      this.contentTransformer = contentTransformer || this.contentTransformer
 
       if (triggerRegexp) {
         this.triggerRegexp = new RegExp(triggerRegexp, 'gi')

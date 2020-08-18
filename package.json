@@ -2,7 +2,7 @@
 	"name": "html-configurable-autocomplete",
 	"displayName": "HTML Configurable Autocomplete",
 	"description": "Autocomplete your HTML content and navigate to definitions by providing simple matching rules",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"publisher": "BrightSoul",
 	"icon": "icon.png",
 	"author": {
@@ -134,10 +134,28 @@
 								"default": "",
 								"description": "All files matching this glob pattern will be excluded from the scanning of completion items. This pattern is relative to the workspace folder. Supports placeholders ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension} and (if you configured a definition provider) ${definitionDirName}, ${definitionDirPath}, ${definitionFilePath}, ${definitionFileName}, ${definitionFileNameWithoutExtension}. Optional, no files are excluded by default."
 							},
+							"contentTransformer": {
+								"type": "string",
+								"default": "",
+								"enum": [
+									"",
+									"es6-module-nodes"
+								],
+								"description": "This transformer will will transform file content before the contentRegexp is executed. Optional. Default is no transformer."
+							},
 							"contentRegexp": {
 								"type": "string",
 								"default": "",
 								"description": "A regexp used to extract completion items from content. The first capture group will be used, if present, otherwise the whole match is used. Required."
+							},
+							"completionItemTransformer": {
+								"type": "string",
+								"default": "",
+								"enum": [
+									"",
+									"camelcase-to-kebabcase"
+								],
+								"description": "This transformer will transform the contentRegexp matched text. The transformed text will be displayed as the completion item to the user. Optional. Default is no transformer."
 							},
 							"staticItems": {
 								"type": "array",
@@ -160,6 +178,15 @@
 								"default": "true",
 								"description": "Enable/disable this matching rule. Optional, defaults to true."
 							},
+							"definitionTransformer": {
+								"type": "string",
+								"default": "",
+								"enum": [
+									"",
+									"kebabcase-to-camelcase"
+								],
+								"description": "This transformer will transform the definitionRegexp matched text. Optional. Default is no transformer."
+							},
 							"definitionRegexp": {
 								"type": "string",
 								"description": "A regexp used to detect whether the cursor is on a definition. The first capture group, if present, will be used as the name of the definition otherwise the whole match is used. Required."
@@ -172,6 +199,15 @@
 								"type": "string",
 								"default": "",
 								"description": "All files matching this glob pattern will be excluded from the scanning of definitions. Optional, defaults to '' (no files excluded). Supports variables ${dirName}, ${dirPath}, ${filePath}, ${fileName}, ${fileNameWithoutExtension}."
+							},
+							"contentTransformer": {
+								"type": "string",
+								"default": "",
+								"enum": [
+									"",
+									"es6-module-nodes"
+								],
+								"description": "This transformer will transform file content before the contentRegexp is executed. Optional. Default is no transformer."
 							},
 							"contentRegexp": {
 								"type": "string",

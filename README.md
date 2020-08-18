@@ -20,7 +20,7 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
   //Enable the extension (it can be omitted)
   "htmlConfigurableAutocomplete.enable": true,
 
-  //Enable debug (more verbose logging but just if you need to diagnose transformers or regexp behavior)
+  //Enable debug but only if you need more verbose logging to diagnose transformers or regexp issues
   "htmlConfigurableAutocomplete.debug": true,
 
   //Tell it how to autocomplete HTML content
@@ -67,8 +67,12 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       "triggerRegexp": "<[a-z-]+(\\s+[a-z-]+(=\".*?\")?)*[^\"<>]*",
       //Let's go look for this component definition and get its public fields (the definition is found thanks to the definition provider configured below)
       "includeGlobPattern": "${definitionFilePath}",
-      //And inside of it, look for fields (I know, I know, this should be less naive and maybe use a proper js parser, which maybe I'll implement soon)
-      "contentRegexp": "^\\s*([a-z0-9_]+)\\s*;?\\s*$",
+      //Transform original JavaScript content into a list of class and member definitions
+      "contentTransformer": "es6-module-nodes",
+      //And inside of it, look for setter methods
+      "contentRegexp": "instance public set ([a-z0-9_]+)",
+      //JavaScript properties are in camel case, so we transform them in kebab case since they will be used as element attributes
+      "completionItemTransformer": "camelcase-to-kebabcase",
       //They should have this icon
       "itemKind": "Field"
     },
@@ -83,8 +87,10 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       "triggerRegexp": "{{",
       //Go look inside a js file that has the same name and lives in the same directory
       "includeGlobPattern": "${dirPath}${fileNameWithoutExtension}[.]js",
-      //And inside of it, look for fields (again, it should use a less naive approach)
-      "contentRegexp": "^\\s*([a-z0-9_]+)\\s*;?\\s*$",
+      //Transform JS content as a list of class and members definitions
+      "contentTransformer": "es6-module-nodes",
+      //And inside of it, look for properties
+      "contentRegexp": "instance public property ([a-z0-9_]+)",
       //It should have this icon
       "itemKind": "Field"
     }
@@ -168,7 +174,7 @@ Additionally, the following placeholders are also supported for glob patterns of
  * `${definitionFileNameWithoutExtension}` is replaced with `LoadingIndicator`.
 
 ## Transformers
-Using regular expressions on JavaScript files might yield imprecise results. For instance, suppose you wanted to find all properties in a ES6 class like this.
+Using regular expressions to match parts of a JavaScript file might yield imprecise results. For instance, suppose you wanted to find all properties in a ES6 class like this.
 ```
 export default class Foo {
   loading
@@ -185,24 +191,23 @@ export default class Foo {
 ```
 If you wrote a regular expression like `^\s*([a-z0-9_]+)\s*$`, it would correctly match `loading` and `animating`, which is the two properties we are looking for, but it would also match `return` which is obviously not a property.
 
-By using transformers this extension can pre-process content before a regular expression is executed. For instance, by using the `es6-module-nodes` transformer, the previous ES6 class would be transformed like so:
+By using transformers, this extension can pre-process content before a regular expression is executed. For instance, by using the `es6-module-nodes` transformer, the previous ES6 class would be transformed like so:
 ```
 0,15 default class Foo  
 1,4 default class Foo  instance public property loading 
 2,4 default class Foo  instance public property animating 
 4,4 default class Foo  instance public method load 
 ``` 
-As you can see, each line represents a class definition or a member of that class and its position in the original file. In this way, it becomes way easier to write a regular expression that matches all properties: `instance public property ([a-z0-9_]+)`
+As you can see, each line represents a class or member definition and its node position in the original file. This way, it becomes way easier to write a regular expression that matches all properties. Try with `instance public property ([a-z0-9_]+)`
 
-Heres a list of the available transformers.
+## List of supported transformers
 
-#### es6-module-nodes
+### es6-module-nodes
 Internally uses `babel-eslint` to create a textual representation of a ES6 class that's easier for regexp to work on.
 
 It can be used for the following settings:
  * `htmlConfigurableAutocomplete.completionItemProviders[].contentTransformer`
  * `htmlConfigurableAutocomplete.definitionProviders[].contentTransformer`
- * `htmlConfigurableAutocomplete.referenceProviders[].contentTransformer`
 
 Here's a more complete example. The following ES6 class:
 ```
@@ -243,23 +248,24 @@ It's going to be transformed to
 18,4 default class Foo @Fizz,@Buzz instance public get percent 
 21,4 default class Foo @Fizz,@Buzz instance public set visibile 
 ```
-Class info is repeated for each of its members. Zero-based position (line, column) where the original defintion was found is placed at the beginning of each line.
+Class info is repeated for each of its members, in case you wanted to match members of just a particular class. Each output line starts with the zero-based position (line,character) where the original node started.
 
-#### camelcase-to-kebabcase
+The previous example showed the ES6-style exports but it also works with node-style exports (e.g. `module.exports = class Foo {}`).
+
+### camelcase-to-kebabcase
 Simply transforms a `camelCase` string into `kebab-case`.
 
-It can be used for the following settings:
- * `htmlConfigurableAutocomplete.completionItemProviders[].completionItemTransformer`;
+It can be used for the following setting:
+ * `htmlConfigurableAutocomplete.completionItemProviders[].completionItemTransformer`
 
-#### kebabcase-to-camelcase
+### kebabcase-to-camelcase
 Simply transforms a `kebab-case` string into `camelCase`.
 
-It can be used for the following settings:
- * `htmlConfigurableAutocomplete.definitionProviders[].definitionTransformer`;
-
+It can be used for the following setting:
+ * `htmlConfigurableAutocomplete.definitionProviders[].definitionTransformer`
 
 ## Logging
-This extension will log debug, info, warning and error messages in a Visual Studio Code output channel named "HTML Configurable Autocomplete". These messages might help you understand how your rules are behaving, expecially if you set the `htmlConfigurableAutocomplete.debug` option to `true`.
+This extension will log messages to a Visual Studio Code output channel named "HTML Configurable Autocomplete". These messages might help you understanding how your rules and regular expressions are behaving, expecially if you set the `htmlConfigurableAutocomplete.debug` option to `true`.
 
 ![log.png](log.png)
 
@@ -267,14 +273,14 @@ This extension will log debug, info, warning and error messages in a Visual Stud
 
 Oh well, some things could be improved...
 
- * This version works with regular expressions so it doesn't offer any advanced, full-fledged JavaScript parser that could help you get completion items by descriptors in a js file.
+ * The use of transformers might lead to suboptimal performance with large projects since no caching mechanism is used in the current version. Caching for completion items, definitions and references might be implemented in a future version, along with file watchers for automatic cache invalidation.
 
 ## Release Notes
 
-### 1.2.0 (2020-08-xx)
+### 1.2.0 (2020-08-18)
 
- - Added content and completion transformers
- - Added debug mode.
+ - Added 3 transformers: `es6-module-nodes`, `camelcase-to-kebabcase`, `kebabcase-to-camelcase`;
+ - Added verbose logging via the `debug` setting.
 
 ### 1.1.0 (2020-07-29)
 

@@ -110,7 +110,7 @@ module.exports = class ConfigurableCompletionItemProvider {
     const completionList = []
 
     if (results.length === 0) {
-      Logger.warn(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in completion item rule with trigger characters ${this.options.triggerCharacters.join(',')}`)
+      Logger.debug(`Couldn't find any file for include pattern ${includeGlobPattern} and exclude pattern ${excludeGlobPattern} in completion item rule with trigger characters ${this.options.triggerCharacters.join(',')}`)
       return completionList
     }
 
@@ -120,15 +120,15 @@ module.exports = class ConfigurableCompletionItemProvider {
           break
         }
         const content = await fs.readFile(result.fsPath)
-        // TODO: use transformer name from options
-        const transformResult = Transformer.transformContent('es6-module-nodes', content.toString(), result.fsPath)
+        const transformResult = Transformer.transformContent(this.options.contentTransformer, content.toString(), result.fsPath)
 
         let itemPerFileMaxCount = this.options.maxItemsPerFile
         let match
         const regexp = new RegExp(this.options.contentRegexp.source, this.options.contentRegexp.flags)
         while ((match = regexp.exec(transformResult.content)) && (itemPerFileMaxCount-- > 0) && (completionList.length <= this.options.maxItems)) {
           const itemText = match[1] || match[0]
-          const item = new vscode.CompletionItem(itemText, this.options.itemKind)
+          const transformedItemText = Transformer.transformContent(this.options.completionItemTransformer, itemText, itemText)
+          const item = new vscode.CompletionItem(transformedItemText.content, this.options.itemKind)
           completionList.push(item)
         }
       } catch (error) {

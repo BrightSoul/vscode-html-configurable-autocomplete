@@ -8,6 +8,12 @@ module.exports = class ConfigurableDefinitionOptions {
     enable = true;
 
     /**
+     * This transformer will transform the definitionRegexp matched text. Optional. Default is no transformer.
+     * @type {string}
+     */
+    definitionTransformer = '';
+
+    /**
      * A regexp used to detect whether the cursor is on a definition name. The first capture group, if present, will be used as the name of the definition otherwise the whole match is used. Required.
      * @type {RegExp}
      */
@@ -26,6 +32,12 @@ module.exports = class ConfigurableDefinitionOptions {
     excludeGlobPattern = '';
 
     /**
+     * This transformer will transform file content before the contentRegexp is executed. Optional. Default is no transformer.
+     * @type {string}
+     */
+    contentTransformer = '';
+
+    /**
      * A regexp used to extract a definition name from content. The first capture group is used, if present, otherwise the whole match is used. If it's equal to the definitionRegexp match, then that location will open. Required.
      * @type {RegExp}
      */
@@ -34,13 +46,15 @@ module.exports = class ConfigurableDefinitionOptions {
     /**
      *
      * @param {object} options
-     * @param {boolean|undefined} [options.enable]
+     * @param {boolean|null|undefined} [options.enable]
+     * @param {string|null|undefined} [options.definitionTransformer]
      * @param {string} [options.definitionRegexp]
      * @param {string} [options.includeGlobPattern]
-     * @param {string|undefined} [options.excludeGlobPattern]
+     * @param {string|null|undefined} [options.excludeGlobPattern]
+     * @param {string|null|undefined} [options.contentTransformer]
      * @param {string} [options.contentRegexp]
      */
-    constructor ({ enable, definitionRegexp, includeGlobPattern, excludeGlobPattern, contentRegexp }) {
+    constructor ({ enable, definitionTransformer, definitionRegexp, includeGlobPattern, excludeGlobPattern, contentTransformer, contentRegexp }) {
       this.enable = enable != null ? enable : this.enable
       this.definitionRegexp = new RegExp(definitionRegexp, 'gi')
       this.contentRegexp = new RegExp(contentRegexp, 'gim')
@@ -49,5 +63,7 @@ module.exports = class ConfigurableDefinitionOptions {
       }
       this.includeGlobPattern = includeGlobPattern
       this.excludeGlobPattern = excludeGlobPattern || this.excludeGlobPattern
+      this.definitionTransformer = definitionTransformer || this.definitionTransformer
+      this.contentTransformer = contentTransformer || this.contentTransformer
     }
 }

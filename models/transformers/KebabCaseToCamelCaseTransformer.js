@@ -11,7 +11,7 @@ module.exports = class KebabCaseToCamelCaseTransformer {
    */
   static transformContent (content, origin) {
     if (!content) {
-      Logger.debug(`Could not transform empty content from '${origin}' from kebab case to camel case`)
+      Logger.debug(`Could not transform empty content from ${origin} from kebab case to camel case`)
       return new TransformResult(content)
     }
 
