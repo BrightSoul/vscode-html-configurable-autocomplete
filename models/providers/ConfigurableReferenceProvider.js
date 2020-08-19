@@ -87,7 +87,7 @@ module.exports = class ConfigurableReferenceProvider {
         break
       }
       const content = await fs.readFile(result.fsPath)
-      //Transformers currently not supported in reference providers
+      // Transformers currently not supported in reference providers
       const transformResult = Transformer.transformContent('', content.toString(), result.fsPath)
 
       const regexp = new RegExp(this.options.contentRegexp.source, this.options.contentRegexp.flags)

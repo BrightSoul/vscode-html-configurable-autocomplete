@@ -9,7 +9,7 @@ function visitNodes (nodes, output) {
    */
   const visitedNodes = []
 
-  //First, produce a flat list of all meaningful nodes from the hierarchy
+  // First, produce a flat list of all meaningful nodes from the hierarchy
   while (nodes.length > 0) {
     const node = nodes.shift()
     if (node === undefined) {
@@ -61,7 +61,7 @@ function visitChildNodes (node) {
     case 'ObjectExpression':
       return node.properties.filter(p => {
         // @ts-ignore
-        return p.type == 'Property'
+        return p.type === 'Property'
       }).map(p => {
         // @ts-ignore
         return p.value
@@ -91,9 +91,9 @@ function generateOutputForNode (node, allNodes, outputs) {
       const classDeclaration = node
       const className = classDeclaration.id ? classDeclaration.id.name : ''
       const superClassName = classDeclaration.superClass != null && classDeclaration.superClass.type === 'Identifier' ? (':' + /** @type {import("@babel/types").Identifier} */ (classDeclaration.superClass).name) : ''
-      let exportName = findExportNameFromDefaultExport(node, allNodes, className) ||
-                       findExportNameFromNamedExport(node, allNodes, className) ||
-                       findExportNameFromModuleExports(node, allNodes, className)
+      const exportName = findExportNameFromDefaultExport(node, allNodes, className) ||
+                         findExportNameFromNamedExport(node, allNodes, className) ||
+                         findExportNameFromModuleExports(node, allNodes, className)
       return [`${coordinates} ${exportName} class ${className}${superClassName} ${decoratorNames}`]
     }
     case 'ClassProperty': {
@@ -192,7 +192,7 @@ function stripCoordinates (content) {
  * @param {string} className
  * @return {string}
  */
-function findExportNameFromDefaultExport(node, allNodes, className) {
+function findExportNameFromDefaultExport (node, allNodes, className) {
   const defaultExport = allNodes.find(n => n.type === 'ExportDefaultDeclaration' && (
     (n.declaration.type === 'Identifier' && n.declaration.name === className) ||
     (n.declaration === node)
@@ -210,7 +210,7 @@ function findExportNameFromDefaultExport(node, allNodes, className) {
  * @param {string} className
  * @return {string}
  */
-function findExportNameFromNamedExport(node, allNodes, className) {
+function findExportNameFromNamedExport (node, allNodes, className) {
   const namedExport = allNodes.find(n => n.type === 'ExportNamedDeclaration' &&
       n.declaration && n.declaration.type === 'VariableDeclaration' && n.declaration.declarations.length !== 0 && n.declaration.declarations[0].init &&
       ((n.declaration.declarations[0].init.type === 'ClassExpression' && ((n.declaration.declarations[0].init.id && n.declaration.declarations[0].init.id.name === className) || n.declaration.declarations[0].init === node)) ||
@@ -230,7 +230,7 @@ function findExportNameFromNamedExport(node, allNodes, className) {
  * @param {string} className
  * @return {string}
  */
-function findExportNameFromModuleExports(node, allNodes, className) {
+function findExportNameFromModuleExports (node, allNodes, className) {
   const moduleExport = /** @type {import("@babel/types").AssignmentExpression|null} */ (allNodes.find(n => n.type === 'AssignmentExpression' && n.left.type === 'MemberExpression' && n.left.object.type === 'Identifier' && n.left.object.name === 'module' && n.left.property.type === 'Identifier' && n.left.property.name === 'exports'))
   if (!moduleExport) {
     return ''
@@ -240,11 +240,11 @@ function findExportNameFromModuleExports(node, allNodes, className) {
   }
   if (moduleExport.right.type === 'ObjectExpression') {
     const namedExport = moduleExport.right.properties.find(p => {
-      const pr = /** @type {import("@babel/types").ObjectProperty} */ (p);
-      return pr.value === node || (pr.value.type === 'Identifier' && pr.value.name == className)
+      const pr = /** @type {import("@babel/types").ObjectProperty} */ (p)
+      return pr.value === node || (pr.value.type === 'Identifier' && pr.value.name === className)
     })
     if (namedExport) {
-      const objectProperty = /** @type {import("@babel/types").ObjectProperty} */ (namedExport);
+      const objectProperty = /** @type {import("@babel/types").ObjectProperty} */ (namedExport)
       if (objectProperty.key.type === 'Identifier') {
         return objectProperty.key.name
       }
