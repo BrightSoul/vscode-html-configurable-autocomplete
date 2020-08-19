@@ -277,7 +277,7 @@ Oh well, some things could be improved...
 
 ## Release Notes
 
-### 1.2.0 (2020-08-18)
+### 1.2.0 (2020-08-19)
 
  - Added 3 transformers: `es6-module-nodes`, `camelcase-to-kebabcase`, `kebabcase-to-camelcase`;
  - Added verbose logging via the `debug` setting.

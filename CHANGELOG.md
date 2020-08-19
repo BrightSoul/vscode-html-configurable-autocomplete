@@ -1,9 +1,8 @@
 # Change Log
 
-
 ## [Unreleased]
 
-## [1.2.0] - 2020-08-18
+## [1.2.0] - 2020-08-19
 ### Added
  - Added 3 transformers: `es6-module-nodes`, `camelcase-to-kebabcase`, `kebabcase-to-camelcase`.
  - Added verbose logging via the `debug` setting.
@@ -19,6 +18,7 @@
  - Completion item providers.
  - Definition providers.
 
-[Unreleased]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.2.0...HEAD
+[1.1.0]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/releases/tag/v1.0.0
