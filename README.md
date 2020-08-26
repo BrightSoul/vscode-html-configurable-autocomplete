@@ -15,7 +15,7 @@ It needs your configuration so it can find completion items and definitions in y
 
 Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-es6-demo/blob/master/.vscode/settings.json) file in particular.
 
-```json
+```js
 {
   // Enable the extension (it can be omitted)
   "htmlConfigurableAutocomplete.enable": true,
