@@ -2,7 +2,7 @@
 	"name": "html-configurable-autocomplete",
 	"displayName": "HTML Configurable Autocomplete",
 	"description": "Autocomplete your HTML content and navigate to definitions by providing simple matching rules",
-	"version": "1.2.0",
+	"version": "1.3.0",
 	"publisher": "BrightSoul",
 	"icon": "icon.png",
 	"author": {

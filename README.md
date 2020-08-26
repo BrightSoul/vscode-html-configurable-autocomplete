@@ -53,6 +53,8 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
         "data-for",
         "data-if"
       ],
+      // We're typing an attribute name here, so let's help the user by adding ="" right after. The cursor will stop in between double quotes
+      "completionItemSuffix": "=\"\t\"",
       // They should have this icon
       "itemKind": "Enum"
     },
@@ -71,6 +73,8 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       "contentTransformer": "es6-module-nodes",
       // And inside of it, look for setter methods
       "contentRegexp": "instance public set ([a-z0-9_]+)",
+      // We're typing an attribute name here, so let's help the user by adding ="" right after. The cursor will stop in between double quotes
+      "completionItemSuffix": "=\"\t\"",
       // JavaScript properties are in camel case, so we transform them in kebab case since they will be used as element attributes
       "completionItemTransformer": "camelcase-to-kebabcase",
       // They should have this icon

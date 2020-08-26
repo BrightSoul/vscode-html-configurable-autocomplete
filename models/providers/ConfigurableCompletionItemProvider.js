@@ -93,7 +93,11 @@ module.exports = class ConfigurableCompletionItemProvider {
    * @return {Array<vscode.CompletionItem>}
    */
   getStaticCompletionItems () {
-    return this.options.staticItems.map(item => new vscode.CompletionItem(item, this.options.itemKind))
+    return this.options.staticItems.map(item => {
+      const staticCompletionItem = new vscode.CompletionItem(item, this.options.itemKind)
+      createSnippetForCompletionItem(staticCompletionItem, this.options)
+      return staticCompletionItem
+    })
   }
 
   /**
@@ -140,11 +144,7 @@ module.exports = class ConfigurableCompletionItemProvider {
           const itemText = match[1] || match[0]
           const transformedItemText = Transformer.transformContent(this.options.completionItemTransformer, itemText, itemText)
           const item = new vscode.CompletionItem(transformedItemText.content, this.options.itemKind)
-          const snippet = new vscode.SnippetString()
-          appendTextToSnippet(snippet, this.options.completionItemPrefix)
-          appendTextToSnippet(snippet, transformedItemText.content)
-          appendTextToSnippet(snippet, this.options.completionItemSuffix)
-          item.insertText = snippet
+          createSnippetForCompletionItem(item, this.options)
           completionList.push(item)
         }
       } catch (error) {
@@ -153,6 +153,18 @@ module.exports = class ConfigurableCompletionItemProvider {
     }
     return completionList
   }
+}
+
+/**
+ * @param {vscode.CompletionItem} item
+ * @param {import('../options/ConfigurableCompletionItemOptions')} options
+ */
+function createSnippetForCompletionItem (item, options) {
+  const snippet = new vscode.SnippetString()
+  appendTextToSnippet(snippet, options.completionItemPrefix)
+  appendTextToSnippet(snippet, item.label)
+  appendTextToSnippet(snippet, options.completionItemSuffix)
+  item.insertText = snippet
 }
 
 /**
