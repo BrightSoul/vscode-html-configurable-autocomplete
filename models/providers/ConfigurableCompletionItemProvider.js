@@ -63,8 +63,19 @@ module.exports = class ConfigurableCompletionItemProvider {
       return true
     }
 
+    let relevantText = ''
+    if (this.options.triggerTransformer) {
+      const transformResult = Transformer.transformContent(this.options.triggerTransformer, document.getText(), document.uri.fsPath)
+      const transformedPosition = transformResult.convertOriginalPositionToTransformedPosition(position)
+      const contentLines = transformResult.content.split('\n')
+      const transformedLine = contentLines[transformedPosition.line]
+      relevantText = transformedLine.substr(transformedPosition.character)
+      position = new vscode.Position(0, relevantText.length)
+    } else {
+      relevantText = currentLine.text.substr(0, position.character)
+    }
+
     const regexp = new RegExp(this.options.triggerRegexp.source, this.options.triggerRegexp.flags)
-    const relevantText = currentLine.text.substr(0, position.character)
     let match
     while ((match = regexp.exec(relevantText))) {
       if (position.character >= match.index && position.character <= (match.index + match[0].length)) {

@@ -1,6 +1,6 @@
 const it = require('@jest/globals').it
 const expect = require('@jest/globals').expect
-const formatter = require('../models/services/NodesFormatter')
+const formatter = require('../models/services/JsNodesFormatter')
 const parse = require('babel-eslint/lib/parse')
 const config = { ecmaVersion: 2020, sourceType: 'module' }
 

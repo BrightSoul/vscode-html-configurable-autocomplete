@@ -75,6 +75,15 @@
 								"type": "string",
 								"description": "A filtering regexp activating item completion only when the cursor is inside one of its matches. Optional."
 							},
+							"triggerTransformer": {
+								"type": "string",
+								"default": "",
+								"enum": [
+									"",
+									"html-hierarchy"
+								],
+								"description": "This transformer will transform the current editor content before triggerRegexp is executed. Optional."
+							},
 							"maxFiles": {
 								"type": "number",
 								"default": 50,
@@ -141,7 +150,7 @@
 									"",
 									"es6-module-nodes"
 								],
-								"description": "This transformer will will transform file content before the contentRegexp is executed. Optional. Default is no transformer."
+								"description": "This transformer will transform file content before the contentRegexp is executed. Optional. Default is no transformer."
 							},
 							"contentRegexp": {
 								"type": "string",
@@ -286,6 +295,7 @@
 	},
 	"dependencies": {
 		"@babel/types": "^7.11.0",
-		"babel-eslint": "^10.1.0"
+		"babel-eslint": "^10.1.0",
+		"htmlparser2": "^4.1.0"
 	}
 }

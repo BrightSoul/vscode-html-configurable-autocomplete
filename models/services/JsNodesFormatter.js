@@ -253,7 +253,7 @@ function findExportNameFromModuleExports (node, allNodes, className) {
   return ''
 }
 
-module.exports = class NodesFormatter {
+module.exports = class JsNodesFormatter {
   /**
    * @param {Array<import("@babel/types").Node>|import("@babel/types").Node} nodes
    * @return {string}

@@ -92,8 +92,9 @@ module.exports = class ConfigurableDefinitionProvider {
         const lines = transformResult.content.substr(0, match.index).split('\n')
 
         const uri = vscode.Uri.file(result.fsPath)
-        const position = transformResult.positionResolver(new vscode.Position(lines.length - 1, lines[lines.length - 1].length))
-        const location = new vscode.Location(uri, position)
+        const transformedPosition = new vscode.Position(lines.length - 1, lines[lines.length - 1].length)
+        const originalPosition = transformResult.convertTransformedPositionToOriginalPosition(transformedPosition)
+        const location = new vscode.Location(uri, originalPosition)
         return location
       }
     }

@@ -21,6 +21,12 @@ module.exports = class ConfigurableCompletionItemOptions {
     triggerRegexp = undefined;
 
     /**
+     * This transformer will transform the current editor content before triggerRegexp is executed. Optional.
+     * @type {string|undefined}
+     */
+    triggerTransformer = '';
+
+    /**
      * Maximum number of files to scan for completion items. Optional, defaults to 50.
      * @type {number}
      */
@@ -63,7 +69,7 @@ module.exports = class ConfigurableCompletionItemOptions {
     completionItemTransformer = '';
 
     /**
-     * This transformer will will transform file content before the contentRegexp is executed. Optional. Default is no transformer.
+     * This transformer will transform file content before the contentRegexp is executed. Optional. Default is no transformer.
      * @type {string|undefined}
      */
     contentTransformer = '';
@@ -86,6 +92,7 @@ module.exports = class ConfigurableCompletionItemOptions {
      * @param {boolean|null|undefined} [options.enable]
      * @param {Array<string>} [options.triggerCharacters]
      * @param {string|null|undefined} [options.triggerRegexp]
+     * @param {string|null|undefined} [options.triggerTransformer]
      * @param {number|null|undefined} [options.maxFiles]
      * @param {number|null|undefined} [options.maxItems]
      * @param {number|null|undefined} [options.maxItemsPerFile]
@@ -97,7 +104,7 @@ module.exports = class ConfigurableCompletionItemOptions {
      * @param {string} [options.contentRegexp]
      * @param {Array<string>} [options.staticItems]
      */
-    constructor ({ enable, triggerCharacters, triggerRegexp, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, completionItemTransformer, contentTransformer, contentRegexp, staticItems }) {
+    constructor ({ enable, triggerCharacters, triggerRegexp, triggerTransformer, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, completionItemTransformer, contentTransformer, contentRegexp, staticItems }) {
       if (!triggerCharacters || !Array.isArray(triggerCharacters) || triggerCharacters.length === 0) {
         throw new Error(`${errorPrefix} triggerCharacters is a required option and it must define at least one character`)
       }
@@ -114,6 +121,7 @@ module.exports = class ConfigurableCompletionItemOptions {
       this.staticItems = staticItems && Array.isArray(staticItems) ? staticItems : this.staticItems
       this.completionItemTransformer = completionItemTransformer || this.completionItemTransformer
       this.contentTransformer = contentTransformer || this.contentTransformer
+      this.triggerTransformer = triggerTransformer || this.triggerTransformer
 
       if (triggerRegexp) {
         this.triggerRegexp = new RegExp(triggerRegexp, 'gi')

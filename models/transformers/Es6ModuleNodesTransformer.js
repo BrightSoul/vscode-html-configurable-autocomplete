@@ -1,8 +1,7 @@
 const parse = require('babel-eslint/lib/parse')
 const Logger = require('../services/Logger')
 const TransformResult = require('./TransformResult')
-const NodesFormatter = require('../services/NodesFormatter')
-const vscode = require('vscode')
+const JsNodesFormatter = require('../services/JsNodesFormatter')
 
 module.exports = class Es6ModuleNodesTransformer {
   /**
@@ -19,32 +18,11 @@ module.exports = class Es6ModuleNodesTransformer {
 
     try {
       const file = parse(content, { ecmaVersion: 2020, sourceType: 'module' })
-      const transformedContent = NodesFormatter.formatNodes(file)
-      return new TransformResult(transformedContent, Es6ModuleNodesTransformer.positionResolver)
+      const transformedContent = JsNodesFormatter.formatNodes(file)
+      return new TransformResult(transformedContent, TransformResult.transformedToOriginalPositionConverter, TransformResult.originalToTransformedPositionConverter)
     } catch (error) {
-      Logger.debug(`Could not extract tokens from ES6 Module ${origin || content} because: ${error}`)
+      Logger.debug(`Could not extract nodes from ES6 Module ${origin || content} because: ${error}`)
       return new TransformResult('')
     }
-  }
-
-  /**
-   * @param {string} content
-   * @param {vscode.Position} position
-   * @returns {vscode.Position}
-   */
-  static positionResolver (content, position) {
-    const lines = content.split('\n')
-    if (position.line >= lines.length - 1) {
-      Logger.error("Couldn't resolve original position")
-      return position
-    }
-    const originalPositionValues = lines[position.line].split('\t')[0].split(',')
-    if (originalPositionValues.length < 2) {
-      Logger.error("Couldn't resolve original position")
-      return position
-    }
-
-    const originalPosition = new vscode.Position(+originalPositionValues[0], +originalPositionValues[1])
-    return originalPosition
   }
 }

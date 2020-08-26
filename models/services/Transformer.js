@@ -1,14 +1,18 @@
 const Logger = require('./Logger')
 const Es6ModuleNodesTransformer = require('../transformers/Es6ModuleNodesTransformer')
 const CamelCaseToKebabCaseTransformer = require('../transformers/CamelCaseToKebabCaseTransformer')
+const HtmlHierarchyTransformer = require('../transformers/HtmlHierarchyTransformer')
 const TransformResult = require('../transformers/TransformResult')
+const KebabCaseToCamelCaseTransformer = require('../transformers/KebabCaseToCamelCaseTransformer')
 
 /**
  * @type {Object.<string, {transformContent: (content: string, origin: string|undefined) => TransformResult}>}
  */
 const transformerMap = {
   'es6-module-nodes': Es6ModuleNodesTransformer,
-  'camelcase-to-kebabcase': CamelCaseToKebabCaseTransformer
+  'camelcase-to-kebabcase': CamelCaseToKebabCaseTransformer,
+  'kebabcase-to-camelcase': KebabCaseToCamelCaseTransformer,
+  'html-hierarchy': HtmlHierarchyTransformer
 }
 
 module.exports = class Transformer {
