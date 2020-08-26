@@ -17,119 +17,138 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
 
 ```json
 {
-  //Enable the extension (it can be omitted)
+  // Enable the extension (it can be omitted)
   "htmlConfigurableAutocomplete.enable": true,
 
-  //Enable debug but only if you need more verbose logging to diagnose transformers or regexp issues
+  // Enable debug but only if you need more verbose logging to diagnose transformers or regexp issues
   "htmlConfigurableAutocomplete.debug": true,
 
-  //Tell it how to autocomplete HTML content
+  // Tell it how to autocomplete HTML content
   "htmlConfigurableAutocomplete.completionItemProviders": [
     {
-      //Can be omitted
+      // Can be omitted
       "enable": true,
-      //It should be activated when < is pressed (for tag names)
+      // It should be activated when < is pressed (for tag names)
       "triggerCharacters": [
         "<"
       ],
-      //Then look into js files in the components directory
+      // Then look into js files in the components directory
       "includeGlobPattern": "src/components/**/*.js",
-      //Find the component name in there and show it as a completion item
+      // Find the component name in there and show it as a completion item
       "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)",
-      //It should have this icon
+      // It should have this icon
       "itemKind": "Constant"
     },
     {
-      //Can be omitted
+      // Can be omitted
       "enable": true,
-      //It should also be activated when space is pressed (for attributes)
+      // It should also be activated when space is pressed (for attributes)
       "triggerCharacters": [
         " "
       ],
-      //But just when the cursor is in an element tag, at a position where an attribute name can be inserted
+      // But just when the cursor is in an element tag, at a position where an attribute name can be inserted
       "triggerRegexp": "<[a-z-]+(\\s+[a-z-]+(=\".*?\")?)*[^\"<>]*",
-      //Show a couple statically-defined completion items
+      // Show a couple statically-defined completion items
       "staticItems": [
         "data-for",
         "data-if"
       ],
-      //They should have this icon
+      // They should have this icon
       "itemKind": "Enum"
     },
     {
-      //Can be omitted
+      // Can be omitted
       "enable": true,
-      //It should also be activated when space is pressed (for attributes)
+      // It should also be activated when space is pressed (for attributes)
       "triggerCharacters": [
         " "
       ],
-      //But just when the cursor is in an element tag, at a position where an attribute name can be inserted
+      // But just when the cursor is in an element tag, at a position where an attribute name can be inserted
       "triggerRegexp": "<[a-z-]+(\\s+[a-z-]+(=\".*?\")?)*[^\"<>]*",
-      //Let's go look for this component definition and get its public fields (the definition is found thanks to the definition provider configured below)
+      // Let's go look for this component definition and get its public fields (the definition is found thanks to the definition provider configured below)
       "includeGlobPattern": "${definitionFilePath}",
-      //Transform original JavaScript content into a list of class and member definitions
+      // Transform original JavaScript content into a list of class and member definitions
       "contentTransformer": "es6-module-nodes",
-      //And inside of it, look for setter methods
+      // And inside of it, look for setter methods
       "contentRegexp": "instance public set ([a-z0-9_]+)",
-      //JavaScript properties are in camel case, so we transform them in kebab case since they will be used as element attributes
+      // JavaScript properties are in camel case, so we transform them in kebab case since they will be used as element attributes
       "completionItemTransformer": "camelcase-to-kebabcase",
-      //They should have this icon
+      // They should have this icon
       "itemKind": "Field"
     },
     {
-      //Can be omitted
+      // Can be omitted
       "enable": true,
-      //It should also be activated when { is pressed (for moustached syntax)
+      // It should also be activated when { is pressed (for moustached syntax)
       "triggerCharacters": [
         "{"
       ],
-      //But just when two { have been typed already
+      // But just when two { have been typed already
       "triggerRegexp": "{{",
-      //Go look inside a js file that has the same name and lives in the same directory
+      // Go look inside a js file that has the same name and lives in the same directory
       "includeGlobPattern": "${dirPath}${fileNameWithoutExtension}[.]js",
-      //Transform JS content as a list of class and members definitions
+      // Transform JS content as a list of class and members definitions
       "contentTransformer": "es6-module-nodes",
-      //And inside of it, look for properties
+      // And inside of it, look for properties
       "contentRegexp": "instance public property ([a-z0-9_]+)",
-      //It should have this icon
+      // It should have this icon
       "itemKind": "Field"
-    }
+    },
+    {
+      // Can be omitted
+      "enable": true,
+      // It should also be activated when { is pressed (for moustached syntax)
+      "triggerCharacters": [
+        "{"
+      ],
+      // But just when the cursor is inside an element with the data-for attribute
+      "triggerRegexp": "data-for=.*?>.*{{",
+      // Before executing triggerRexep though, flatten the HTML of the current document
+      "triggerTransformer": "flatten-html",
+      // Show a couple statically-defined completion items
+      "staticItems": [
+        "$item",
+        "$index"
+      ],
+      // They should have this icon
+      "itemKind": "Enum"
+    },
   ],
 
-  //Now tell it how to navigate to definitions
+  // Now tell it how to navigate to definitions
   "htmlConfigurableAutocomplete.definitionProviders": [
     {
-      //Can be omitted
+      // Can be omitted
       "enable": true,
-      //Definitions are provided when the cursor is on tag names having a - in them
+      // Definitions are provided when the cursor is on tag names having a - in them
       "definitionRegexp": "</?([a-z]+-[a-z]+)[^>]*",
-      //Then go look inside js files that live in the components directory
+      // Then go look inside js files that live in the components directory
       "includeGlobPattern": "src/components/**/*.js",
-      //And find that very same tag name in them; if one is found, VSCode navigates to definition!
+      // And find that very same tag name in them; if one is found, VSCode navigates to definition!
       "contentRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)"
     },
     {
-      //Can be omitted
+      // Can be omitted
       "enable": true,
-      //Definitions are provided when the cursor is inside moustaches
+      // Definitions are provided when the cursor is inside moustaches
       "definitionRegexp": "{{\\s*(.+?)\\s*}}",
-      //Then go look inside js file that lives in the same directory and has the same name with the js extension
+      // Then go look inside js file that lives in the same directory and has the same name with the js extension
       "includeGlobPattern": "${dirPath}${fileNameWithoutExtension}[.]js",
-      //Then find the field it's referring to
+      // Then find the field it's referring to
       "contentRegexp": "^\\s*([a-z0-9_]+)\\s*;?\\s*$"
     }
   ],
 
-  //Tell it how to find references (i.e. usages) in the project
+  // Tell it how to find references (i.e. usages) in the project
   "htmlConfigurableAutocomplete.referenceProviders": [
     {
-      //Can be omitted
+      // Can be omitted
       "enable": true,
-      //Get the name of the component so we can find references in the project
+      // Get the name of the component so we can find references in the project
       "referenceRegexp": "@Component\\(\\s*['\"]\\s*([a-z-]+)",
-      //Look for references inside HTML files
+      // Look for references inside HTML files
       "includeGlobPattern": "src/components/**/*.html",
-      //References look like tag elements with a - in their name
+      // References look like tag elements with a - in their name
       "contentRegexp": "<([a-z]+-[a-z]+)"
     }
   ]
@@ -252,17 +271,50 @@ Class info is repeated for each of its members, in case you wanted to match memb
 
 The previous example showed the ES6-style exports but it also works with node-style exports (e.g. `module.exports = class Foo {}`).
 
+### flatten-html
+Sometimes you want to display some completion items only when you're in a specific portion of the HTML document, such as an ancestor element having a specific attribute. This transformer uses [htmlparser2](https://www.npmjs.com/package/htmlparser2) to parse the HTML content and then it will flatten the HTML hierarchy of elements so it will be easier for you to write a regular expression.
+
+It can be used for the following settings:
+ * `htmlConfigurableAutocomplete.completionItemProviders[].triggerTransformer`
+
+Suppose the current editor has this HTML content:
+
+```
+<div data-for="foo">
+  <span>bar</span>
+</div>
+```
+
+It will be transformed as follows, by repeating all ancestors for each given element or text node.
+
+```
+<div data-for="foo">
+<div data-for="foo"><span>
+<div data-for="foo"><span>bar
+```
+
+It's now easier to write the `triggerRegexp`, since it will execute on this transformed content. Here's an example of a `triggerRegexp` which will match the `span` element only if inside an ancestor having the `data-for` attribute. 
+
+```
+<.*?data-foo=.*?>.*<span
+```
+
+
 ### camelcase-to-kebabcase
 Simply transforms a `camelCase` string into `kebab-case`.
 
 It can be used for the following setting:
  * `htmlConfigurableAutocomplete.completionItemProviders[].completionItemTransformer`
 
+For instance, `myProperty` is transformed to `my-property`.
+
 ### kebabcase-to-camelcase
 Simply transforms a `kebab-case` string into `camelCase`.
 
 It can be used for the following setting:
  * `htmlConfigurableAutocomplete.definitionProviders[].definitionTransformer`
+
+For instance, `my-property` is transformed to `myProperty`.
 
 ## Logging
 This extension will log messages to a Visual Studio Code output channel named "HTML Configurable Autocomplete". These messages might help you understanding how your rules and regular expressions are behaving, expecially if you set the `htmlConfigurableAutocomplete.debug` option to `true`.
@@ -279,7 +331,8 @@ Oh well, some things could be improved...
 
 ### 1.3.0 (2020-08-26)
 
- - transformer `flatten-html`.
+ - transformer `flatten-html`;
+ - completion item prefix and suffix.
 
 ### 1.2.0 (2020-08-19)
 

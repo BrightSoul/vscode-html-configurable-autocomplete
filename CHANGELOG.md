@@ -5,6 +5,7 @@
 ## [1.3.0] - 2020-08-26
 ### Added
  - transformers `flatten-html`.
+ - completion item prefix and suffix.
 
 ## [1.2.0] - 2020-08-19
 ### Added
