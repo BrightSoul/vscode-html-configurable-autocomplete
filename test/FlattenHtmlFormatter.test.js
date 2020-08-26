@@ -1,7 +1,6 @@
 const it = require('@jest/globals').it
 const expect = require('@jest/globals').expect
-const HtmlHierarchyFormatter = require('../models/services/HtmlHierarchyFormatter')
-const { Parser } = require('htmlparser2')
+const FlattenHtmlFormatter = require('../models/services/FlattenHtmlFormatter')
 
 it('should format HTML container elements', () => {
   // Arrange
@@ -9,7 +8,7 @@ it('should format HTML container elements', () => {
   const expectedOutput = '0,0 <div>\n0,5 <div><span>'
 
   // Act
-  const actualOutput = parseAndFormat(content)
+  const actualOutput = FlattenHtmlFormatter.parseAndFormat(content)
 
   // Assert
   expect(actualOutput).toBe(expectedOutput)
@@ -21,7 +20,7 @@ it('should format HTML container elements with attributes', () => {
   const expectedOutput = '0,0 <div foo="bar">\n0,15 <div foo="bar"><span fizz="buzz">'
 
   // Act
-  const actualOutput = parseAndFormat(content)
+  const actualOutput = FlattenHtmlFormatter.parseAndFormat(content)
 
   // Assert
   expect(actualOutput).toBe(expectedOutput)
@@ -33,7 +32,7 @@ it('should format HTML container elements with attributes and inconsistent newli
   const expectedOutput = '0,0 <div foo="bar">\n1,0 <div foo="bar"><span fizz="buzz">\n3,0 <div foo="bar"><hr>\n4,0 <div foo="bar"><article hey="wow">'
 
   // Act
-  const actualOutput = parseAndFormat(content)
+  const actualOutput = FlattenHtmlFormatter.parseAndFormat(content)
 
   // Assert
   expect(actualOutput).toBe(expectedOutput)
@@ -45,35 +44,20 @@ it('should format HTML container elements with broken content', () => {
   const expectedOutput = '0,0 <div foo="bar">'
 
   // Act
-  const actualOutput = parseAndFormat(content)
+  const actualOutput = FlattenHtmlFormatter.parseAndFormat(content)
 
   // Assert
   expect(actualOutput).toBe(expectedOutput)
 })
 
-/**
- * @param {string} content
- */
-function parseAndFormat (content) {
-  const formatter = new HtmlHierarchyFormatter(content)
-  /**
-   * @type {any}
-   */
-  let parser = null
-  parser = new Parser(
-    {
-      onopentag () {
-        formatter.push(parser.startIndex, parser.endIndex)
-      },
-      onclosetag () {
-        formatter.pop()
-      }
-    },
-    { decodeEntities: true }
-  )
+it('should format HTML container elements with text', () => {
+  // Arrange
+  const content = '<div foo="bar">\n <span fizz="buzz">Hey yo!</span>\n</div>'
+  const expectedOutput = '0,0 <div foo="bar">\n1,1 <div foo="bar"><span fizz="buzz">\n1,19 <div foo="bar"><span fizz="buzz">Hey yo!'
 
   // Act
-  parser.write(content)
-  parser.end()
-  return formatter.getOutput()
-}
+  const actualOutput = FlattenHtmlFormatter.parseAndFormat(content)
+
+  // Assert
+  expect(actualOutput).toBe(expectedOutput)
+})

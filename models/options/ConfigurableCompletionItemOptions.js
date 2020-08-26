@@ -22,7 +22,7 @@ module.exports = class ConfigurableCompletionItemOptions {
 
     /**
      * This transformer will transform the current editor content before triggerRegexp is executed. Optional.
-     * @type {string|undefined}
+     * @type {string}
      */
     triggerTransformer = '';
 
@@ -64,13 +64,25 @@ module.exports = class ConfigurableCompletionItemOptions {
 
     /**
      * This transformer will transform the contentRegexp matched text. The transformed text will be displayed as the completion item to the user. Optional. Default is no transformer.
-     * @type {string|undefined}
+     * @type {string}
      */
     completionItemTransformer = '';
 
     /**
+     * String prefix that will be prepended to the completion item when the user selects it. Tab characters (i.e. \\t) are interpreted as tab stops. Optional. Default is no prefix.
+     * @type {string}
+     */
+    completionItemPrefix = '';
+
+    /**
+     * String suffix that will be appended to the completion item when the user selects it. Tab characters (i.e. \\t) are interpreted as tab stops. Optional. Default is no suffix.
+     * @type {string}
+     */
+    completionItemSuffix = '';
+
+    /**
      * This transformer will transform file content before the contentRegexp is executed. Optional. Default is no transformer.
-     * @type {string|undefined}
+     * @type {string}
      */
     contentTransformer = '';
 
@@ -100,11 +112,13 @@ module.exports = class ConfigurableCompletionItemOptions {
      * @param {string|null|undefined} [options.includeGlobPattern]
      * @param {string|null|undefined} [options.excludeGlobPattern]
      * @param {string|null|undefined} [options.completionItemTransformer]
+     * @param {string|null|undefined} [options.completionItemPrefix]
+     * @param {string|null|undefined} [options.completionItemSuffix]
      * @param {string|null|undefined} [options.contentTransformer]
      * @param {string} [options.contentRegexp]
      * @param {Array<string>} [options.staticItems]
      */
-    constructor ({ enable, triggerCharacters, triggerRegexp, triggerTransformer, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, completionItemTransformer, contentTransformer, contentRegexp, staticItems }) {
+    constructor ({ enable, triggerCharacters, triggerRegexp, triggerTransformer, maxFiles, maxItems, maxItemsPerFile, itemKind, includeGlobPattern, excludeGlobPattern, completionItemTransformer, completionItemPrefix, completionItemSuffix, contentTransformer, contentRegexp, staticItems }) {
       if (!triggerCharacters || !Array.isArray(triggerCharacters) || triggerCharacters.length === 0) {
         throw new Error(`${errorPrefix} triggerCharacters is a required option and it must define at least one character`)
       }
@@ -122,6 +136,8 @@ module.exports = class ConfigurableCompletionItemOptions {
       this.completionItemTransformer = completionItemTransformer || this.completionItemTransformer
       this.contentTransformer = contentTransformer || this.contentTransformer
       this.triggerTransformer = triggerTransformer || this.triggerTransformer
+      this.completionItemPrefix = completionItemPrefix || this.completionItemPrefix
+      this.completionItemSuffix = completionItemSuffix || this.completionItemSuffix
 
       if (triggerRegexp) {
         this.triggerRegexp = new RegExp(triggerRegexp, 'gi')

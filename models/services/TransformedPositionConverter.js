@@ -18,7 +18,8 @@ module.exports = class TransformedPositionConverter {
       return undefined
     }
     const line = lines.indexOf(coordinates[0].line)
-    const character = lines[line].indexOf(' ') + 1
+    const caretPosition = lines[line].indexOf(this.caretIndicator)
+    const character = caretPosition >= 0 ? caretPosition : lines[line].length
     return { line, character }
   }
 
@@ -35,6 +36,13 @@ module.exports = class TransformedPositionConverter {
     const line = lines[transformedPosition.line]
     const position = getPositionFromLine(line)
     return position
+  }
+
+  /**
+   * @type {string}
+   */
+  static get caretIndicator () {
+    return '\x1B'
   }
 }
 

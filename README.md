@@ -277,6 +277,10 @@ Oh well, some things could be improved...
 
 ## Release Notes
 
+### 1.3.0 (2020-08-26)
+
+ - transformer `flatten-html`.
+
 ### 1.2.0 (2020-08-19)
 
  - 3 transformers: `es6-module-nodes`, `camelcase-to-kebabcase`, `kebabcase-to-camelcase`;

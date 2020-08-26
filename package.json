@@ -80,7 +80,7 @@
 								"default": "",
 								"enum": [
 									"",
-									"html-hierarchy"
+									"flatten-html"
 								],
 								"description": "This transformer will transform the current editor content before triggerRegexp is executed. Optional."
 							},
@@ -165,6 +165,16 @@
 									"camelcase-to-kebabcase"
 								],
 								"description": "This transformer will transform the contentRegexp matched text. The transformed text will be displayed as the completion item to the user. Optional. Default is no transformer."
+							},
+							"completionItemPrefix": {
+								"type": "string",
+								"default": "",
+								"description": "String prefix that will be prepended to the completion item when the user selects it. Tab characters (i.e. \\t) are interpreted as tab stops. Optional. Default is no prefix."
+							},
+							"completionItemSuffix": {
+								"type": "string",
+								"default": "",
+								"description": "String suffix that will be appended to the completion item when the user selects it. Tab characters (i.e. \\t) are interpreted as tab stops. Optional. Default is no suffix."
 							},
 							"staticItems": {
 								"type": "array",

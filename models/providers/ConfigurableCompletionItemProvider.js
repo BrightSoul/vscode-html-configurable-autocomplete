@@ -65,11 +65,11 @@ module.exports = class ConfigurableCompletionItemProvider {
 
     let relevantText = ''
     if (this.options.triggerTransformer) {
-      const transformResult = Transformer.transformContent(this.options.triggerTransformer, document.getText(), document.uri.fsPath)
+      const transformResult = Transformer.transformContent(this.options.triggerTransformer, document.getText(), document.uri.fsPath, position)
       const transformedPosition = transformResult.convertOriginalPositionToTransformedPosition(position)
       const contentLines = transformResult.content.split('\n')
       const transformedLine = contentLines[transformedPosition.line]
-      relevantText = transformedLine.substr(transformedPosition.character)
+      relevantText = transformedLine.substr(0, transformedPosition.character)
       position = new vscode.Position(0, relevantText.length)
     } else {
       relevantText = currentLine.text.substr(0, position.character)
@@ -140,6 +140,11 @@ module.exports = class ConfigurableCompletionItemProvider {
           const itemText = match[1] || match[0]
           const transformedItemText = Transformer.transformContent(this.options.completionItemTransformer, itemText, itemText)
           const item = new vscode.CompletionItem(transformedItemText.content, this.options.itemKind)
+          const snippet = new vscode.SnippetString()
+          appendTextToSnippet(snippet, this.options.completionItemPrefix)
+          appendTextToSnippet(snippet, transformedItemText.content)
+          appendTextToSnippet(snippet, this.options.completionItemSuffix)
+          item.insertText = snippet
           completionList.push(item)
         }
       } catch (error) {
@@ -147,5 +152,22 @@ module.exports = class ConfigurableCompletionItemProvider {
       }
     }
     return completionList
+  }
+}
+
+/**
+ * @param {vscode.SnippetString} snippet
+ * @param {string} text
+ */
+function appendTextToSnippet (snippet, text) {
+  if (!text) {
+    return
+  }
+  const parts = text.split('\t')
+  for (let i = 0; i < parts.length; i++) {
+    snippet.appendText(parts[i])
+    if (i < parts.length - 1) {
+      snippet.appendTabstop()
+    }
   }
 }

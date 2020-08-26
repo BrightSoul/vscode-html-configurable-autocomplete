@@ -1,18 +1,18 @@
 const Logger = require('./Logger')
 const Es6ModuleNodesTransformer = require('../transformers/Es6ModuleNodesTransformer')
 const CamelCaseToKebabCaseTransformer = require('../transformers/CamelCaseToKebabCaseTransformer')
-const HtmlHierarchyTransformer = require('../transformers/HtmlHierarchyTransformer')
+const FlattenHtmlTransformer = require('../transformers/FlattenHtmlTransformer')
 const TransformResult = require('../transformers/TransformResult')
 const KebabCaseToCamelCaseTransformer = require('../transformers/KebabCaseToCamelCaseTransformer')
 
 /**
- * @type {Object.<string, {transformContent: (content: string, origin: string|undefined) => TransformResult}>}
+ * @type {Object.<string, {transformContent: (content: string, origin: string|undefined, caretPosition: import('vscode').Position|undefined) => TransformResult}>}
  */
 const transformerMap = {
   'es6-module-nodes': Es6ModuleNodesTransformer,
   'camelcase-to-kebabcase': CamelCaseToKebabCaseTransformer,
   'kebabcase-to-camelcase': KebabCaseToCamelCaseTransformer,
-  'html-hierarchy': HtmlHierarchyTransformer
+  'flatten-html': FlattenHtmlTransformer
 }
 
 module.exports = class Transformer {
@@ -21,9 +21,10 @@ module.exports = class Transformer {
    * @param {string|undefined} transformerName
    * @param {string} content
    * @param {string|undefined} origin
+   * @param {import('vscode').Position} [caretPosition]
    * @returns {TransformResult}
    */
-  static transformContent (transformerName, content, origin) {
+  static transformContent (transformerName, content, origin, caretPosition) {
     if (!transformerName) {
       return new TransformResult(content)
     }
@@ -32,7 +33,7 @@ module.exports = class Transformer {
       return new TransformResult(content)
     }
     const transformer = transformerMap[transformerName]
-    const transformedContent = transformer.transformContent(content, origin)
+    const transformedContent = transformer.transformContent(content, origin, caretPosition)
     Logger.debug(`Content from ${origin || content} was transformed to:\n${transformedContent.content}`)
     return transformedContent
   }

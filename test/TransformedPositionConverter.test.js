@@ -1,10 +1,11 @@
 const it = require('@jest/globals').it
 const expect = require('@jest/globals').expect
 const converter = require('../models/services/TransformedPositionConverter')
+
 it('should return the transformed position when converting original to transformed', () => {
   // Arrange
   const originalPosition = { line: 2, character: 2 }
-  const expectedTransformedPosition = { line: 1, character: 4 }
+  const expectedTransformedPosition = { line: 1, character: 7 }
   const content = '0,3 foo\n2,1 bar'
 
   // Act
@@ -17,7 +18,7 @@ it('should return the transformed position when converting original to transform
 it('should return the transformed position when converting original to transformed with multiple definitions on the same line', () => {
   // Arrange
   const originalPosition = { line: 2, character: 7 }
-  const expectedTransformedPosition = { line: 2, character: 4 }
+  const expectedTransformedPosition = { line: 2, character: 8 }
   const content = '0,3 foo\n2,1 bar\n2,6 fizz\n2,13 buzz'
 
   // Act
