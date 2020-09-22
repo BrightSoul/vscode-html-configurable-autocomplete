@@ -11,7 +11,7 @@ module.exports = class TransformedPositionConverter {
     const lines = content.split('\n')
     const coordinates = lines
       .map(line => { return { line, position: getPositionFromLine(line) } })
-      .filter(entry => entry.position.line <= originalPosition.line)
+      .filter(entry => entry.position.line < originalPosition.line || (entry.position.line === originalPosition.line && entry.position.character <= originalPosition.character))
       .sort((a, b) => Math.sign(getPositionScore(b.position) - getPositionScore(a.position)))
 
     if (coordinates.length === 0) {
