@@ -58,7 +58,7 @@ module.exports = class TransformResult {
    * @returns {vscode.Position}
    */
   static transformedToOriginalPositionConverter (content, transformedPosition) {
-    const originalPosition = TransformedPositionConverter.convertOriginalToTransformed(content, transformedPosition)
+    const originalPosition = TransformedPositionConverter.convertTransformedToOriginal(content, transformedPosition)
     if (!originalPosition) {
       Logger.error("Couldn't convert transformed position")
       return transformedPosition

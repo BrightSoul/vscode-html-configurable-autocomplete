@@ -333,6 +333,10 @@ Oh well, some things could be improved...
 
 ## Release Notes
 
+### 1.3.1 (2020-09-22)
+
+ - fixed a bug on navigating to definition when the `es6-module-nodes` transformer is used.
+
 ### 1.3.0 (2020-08-26)
 
  - transformer `flatten-html`;
