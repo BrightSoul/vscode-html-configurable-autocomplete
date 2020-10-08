@@ -2,6 +2,7 @@ const Logger = require('./Logger')
 const Es6ModuleNodesTransformer = require('../transformers/Es6ModuleNodesTransformer')
 const CamelCaseToKebabCaseTransformer = require('../transformers/CamelCaseToKebabCaseTransformer')
 const FlattenHtmlTransformer = require('../transformers/FlattenHtmlTransformer')
+const FlattenJsonTransformer = require('../transformers/FlattenJsonTransformer')
 const TransformResult = require('../transformers/TransformResult')
 const KebabCaseToCamelCaseTransformer = require('../transformers/KebabCaseToCamelCaseTransformer')
 
@@ -12,7 +13,8 @@ const transformerMap = {
   'es6-module-nodes': Es6ModuleNodesTransformer,
   'camelcase-to-kebabcase': CamelCaseToKebabCaseTransformer,
   'kebabcase-to-camelcase': KebabCaseToCamelCaseTransformer,
-  'flatten-html': FlattenHtmlTransformer
+  'flatten-html': FlattenHtmlTransformer,
+  'flatten-json': FlattenJsonTransformer
 }
 
 module.exports = class Transformer {

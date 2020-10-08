@@ -148,7 +148,8 @@
 								"default": "",
 								"enum": [
 									"",
-									"es6-module-nodes"
+									"es6-module-nodes",
+									"flatten-json"
 								],
 								"description": "This transformer will transform file content before the contentRegexp is executed. Optional. Default is no transformer."
 							},
@@ -224,7 +225,8 @@
 								"default": "",
 								"enum": [
 									"",
-									"es6-module-nodes"
+									"es6-module-nodes",
+									"flatten-json"
 								],
 								"description": "This transformer will transform file content before the contentRegexp is executed. Optional. Default is no transformer."
 							},
@@ -306,6 +308,7 @@
 	"dependencies": {
 		"@babel/types": "^7.11.0",
 		"babel-eslint": "^10.1.0",
+		"clarinet": "^0.12.4",
 		"htmlparser2": "^4.1.0"
 	}
 }
