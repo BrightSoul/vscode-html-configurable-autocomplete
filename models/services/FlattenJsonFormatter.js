@@ -1,5 +1,4 @@
 const clarinet = require('clarinet');
-const { start } = require('repl');
 
 module.exports = class FlattenJsonFormatter {
   /**
@@ -71,11 +70,11 @@ module.exports = class FlattenJsonFormatter {
       if (lastItem !== undefined && lastItem.index !== undefined) {
         lastItem.index++;
       }
+      if (lastItem.index === undefined && key === undefined) {
+        return;
+      }
     }
 
-    if (key === undefined) {
-      return;
-    }
     for (let i = this.#lastIndex; i < startIndex; i++) {
       if (this.#content.charAt(i) === '\n') {
         this.#line++
@@ -84,9 +83,9 @@ module.exports = class FlattenJsonFormatter {
     }
     this.#lastIndex = startIndex
     
-    const item = { item: key, index: undefined };
+    const item = key ? { item: key, index: undefined } : undefined
     const position = `${this.#line},${startIndex - this.#lastLineIndex - 1}`
-    const currentStack = item ? this.#stack.concat(item) : this.#stack;
+    const currentStack = item ? this.#stack.concat(item) : this.#stack
     const joinedStack = currentStack.map(c => {
       if (c.index === undefined) {
         return c.item
@@ -94,22 +93,22 @@ module.exports = class FlattenJsonFormatter {
       return `${c.item}[${c.index}]`
     }).join('.');
     this.#output.push(`${position} ${joinedStack}`)
-    if (addToStack) {
+    if (addToStack && item) {
       this.#stack.push(item)
     }
   }
 
   pop () {
-    this.#objectsClosed++;
+    this.#objectsClosed++
     this.#stack.pop()
   }
 
   pushArray () {
     if (this.#stack.length === 0) {
-      this.push(0, '', true);
+      this.push(0, '', true)
     }
-    const lastItem = this.#stack[this.#stack.length-1];
-    lastItem.index = lastItem.index === undefined ? -1 : lastItem.index + 1;
+    const lastItem = this.#stack[this.#stack.length-1]
+    lastItem.index = lastItem.index === undefined ? -1 : lastItem.index + 1
   }
 
   popArray () {
@@ -129,7 +128,7 @@ module.exports = class FlattenJsonFormatter {
     parser = clarinet.parser()
     
     parser.onopenobject = function (key) {
-      formatter.push(parser.position, key, true)
+      formatter.push(parser.position - key.length - 3, key, true)
     }
     parser.onkey = function (key) {
       formatter.push(parser.position, key, false)
@@ -143,8 +142,8 @@ module.exports = class FlattenJsonFormatter {
     parser.onclosearray = function () {
       formatter.popArray();
     }
-    parser.onvalue = function () {
-      formatter.push(parser.position, undefined, false)
+    parser.onvalue = function (value) {
+      formatter.push(parser.position - JSON.stringify(value).length - 1, undefined, false)
     }
     
     parser.write(content)
