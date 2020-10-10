@@ -189,7 +189,7 @@ They support the following placeholders which will be replaced at runtime. Suppo
  * `${fileName}` is replaced with `MainLayout.html`;
  * `${fileNameWithoutExtension}` is replaced with `MainLayout`.
 
-Additionally, the following placeholders are also supported for glob patterns of _completion item providers_. They need at least one configured definition provider which is matching code at the current cursor position. If a definition is found, its file path will be used to replace these placholders. Supposed a definition is found in `src/components/shared/LoadingIndicator.js`:
+Additionally, the following placeholders are also supported for glob patterns of _completion item providers_. They need at least one configured definition provider which is matching code at the current cursor position. If a definition is found, its file path will be used to replace these placeholders. Supposed a definition is found in `src/components/shared/LoadingIndicator.js`:
  * `${definitionDirName}` is replaced with `shared`;
  * `${definitionDirPath}` is replaced with `src/components/shared/`;
  * `${definitionFilePath}` is replaced with `src/components/shared/LoadingIndicator.js`;
