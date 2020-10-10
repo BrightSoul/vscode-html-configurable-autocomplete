@@ -32,12 +32,13 @@ module.exports = class ConfigurableCompletionItemProvider {
    * @returns {Promise<vscode.CompletionList|undefined>}
    */
   async provideCompletionItems (document, position, token) {
-    if (!this.shouldPerformCompletion(document, position)) {
+    const { success, match } = this.shouldPerformCompletion(document, position)
+    if (!success) {
       return
     }
 
     const staticCompletionItems = this.getStaticCompletionItems()
-    const fileCompletionItems = await this.findCompletionItemsInFiles(document, position, token)
+    const fileCompletionItems = await this.findCompletionItemsInFiles(document, match, position, token)
 
     if (token.isCancellationRequested) {
       return
@@ -48,19 +49,19 @@ module.exports = class ConfigurableCompletionItemProvider {
   /**
    * @param {vscode.TextDocument} document
    * @param {vscode.Position} position
-   * @returns {boolean}
+   * @returns {{success: boolean, match: RegExpExecArray|undefined}}
    */
   shouldPerformCompletion (document, position) {
     const currentLine = document.lineAt(position.line)
     const currentCharacter = currentLine.text.charAt(position.character - 1)
     if (!this.options.triggerCharacters.includes(currentCharacter)) {
       // Skip because the last typed character is not one on the trigger characters
-      return false
+      return { success: false, match: undefined }
     }
 
     if (!this.options.triggerRegexp) {
       // No filtering provided, go ahead with completion
-      return true
+      return { success: true, match: undefined }
     }
 
     let relevantText = ''
@@ -76,17 +77,20 @@ module.exports = class ConfigurableCompletionItemProvider {
     }
 
     const regexp = new RegExp(this.options.triggerRegexp.source, this.options.triggerRegexp.flags)
+    /**
+     * @type {RegExpExecArray|null|undefined}
+     */
     let match
     while ((match = regexp.exec(relevantText))) {
       if (position.character >= match.index && position.character <= (match.index + match[0].length)) {
         // The cursor is inside a match, let's go ahead with completion
-        return true
+        return { success: true, match }
       } else {
         Logger.debug(`Completion item trigger regexp '${this.options.triggerRegexp.source}' matched '${match[0]}' but that match was discarded because the editor cursor was not placed inside that match`)
       }
     }
 
-    return false
+    return { success: false, match: undefined }
   }
 
   /**
@@ -102,11 +106,12 @@ module.exports = class ConfigurableCompletionItemProvider {
 
   /**
    * @param {vscode.TextDocument} document
+   * @param {RegExpExecArray|undefined} triggerMatch
    * @param {vscode.Position} position
    * @param {vscode.CancellationToken} token
    * @return {Promise<Array<vscode.CompletionItem>>}
    */
-  async findCompletionItemsInFiles (document, position, token) {
+  async findCompletionItemsInFiles (document, triggerMatch, position, token) {
     if (!this.options.includeGlobPattern || !this.options.contentRegexp) {
       return []
     }
@@ -139,7 +144,8 @@ module.exports = class ConfigurableCompletionItemProvider {
 
         let itemPerFileMaxCount = this.options.maxItemsPerFile
         let match
-        const regexp = new RegExp(this.options.contentRegexp.source, this.options.contentRegexp.flags)
+        const contentRegexpSource = replaceTokensInRegexp(this.options.contentRegexp.source, triggerMatch)
+        const regexp = new RegExp(contentRegexpSource, this.options.contentRegexp.flags)
         while ((match = regexp.exec(transformResult.content)) && (itemPerFileMaxCount-- > 0) && (completionList.length <= this.options.maxItems)) {
           const itemText = match[1] || match[0]
           const transformedItemText = Transformer.transformContent(this.options.completionItemTransformer, itemText, itemText)
@@ -156,6 +162,22 @@ module.exports = class ConfigurableCompletionItemProvider {
     }
     return completionList
   }
+}
+
+/**
+ * @param {string} source
+ * @param {RegExpExecArray|undefined} match
+ * @return {string}
+ */
+function replaceTokensInRegexp (source, match) {
+  if (!match || match.length < 2) {
+    return source
+  }
+  const literalRegexp = new RegExp('[.*+?^${}()|[\\]\\\\]', 'g')
+  for (let i = 1; i < match.length; i++) {
+    source = source.replace(`$${i}`, match[i].replace(literalRegexp, '\\$&'))
+  }
+  return source
 }
 
 /**

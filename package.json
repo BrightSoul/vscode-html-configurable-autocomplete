@@ -2,7 +2,7 @@
 	"name": "html-configurable-autocomplete",
 	"displayName": "HTML Configurable Autocomplete",
 	"description": "Autocomplete your HTML content and navigate to definitions by providing simple matching rules",
-	"version": "1.3.1",
+	"version": "1.4.0",
 	"publisher": "BrightSoul",
 	"icon": "icon.png",
 	"author": {
@@ -73,7 +73,7 @@
 							},
 							"triggerRegexp": {
 								"type": "string",
-								"description": "A filtering regexp activating item completion only when the cursor is inside one of its matches. Optional."
+								"description": "A filtering regexp activating item completion only when the cursor is inside one of its matches. If this regexp contains match groups, then their value will be substituted to the $1, $2, ..., $n placeholders you might have in the contentRegexp. Optional."
 							},
 							"triggerTransformer": {
 								"type": "string",
@@ -156,7 +156,7 @@
 							"contentRegexp": {
 								"type": "string",
 								"default": "",
-								"description": "A regexp used to extract completion items from content. The first capture group will be used, if present, otherwise the whole match is used. Required."
+								"description": "A regexp used to extract completion items from content. The first capture group will be used as the suggestion item, if present, otherwise the whole match is used. You can use placeholders such as $1, $2, ..., $n in this regexp, and they will be substituted with capture group values from the triggerRegexp, if any. Required."
 							},
 							"completionItemTransformer": {
 								"type": "string",

@@ -62,7 +62,7 @@ module.exports = class FlattenJsonFormatter {
    */
   push (startIndex, key, addToStack) {
     // Compensate for this bug in clarinet: https://github.com/dscape/clarinet/issues/68
-    // TODO: Send them a proper pull request or fork it
+    // Or use bass-clarinet: https://github.com/corno/bass-clarinet
     if (key === '' && addToStack) {
       this.#objectsClosed -= 1
     }
@@ -88,16 +88,25 @@ module.exports = class FlattenJsonFormatter {
 
     const item = key !== undefined ? { item: key, index: undefined } : undefined
     const position = `${this.#line},${startIndex - this.#lastLineIndex - 1}`
-    const currentStack = item ? this.#stack.concat(item) : this.#stack
-    const joinedStack = currentStack.map(c => {
+    if (item) {
+      if (addToStack) {
+        this.#stack.push(item)
+      } else {
+        if (this.#stack.length > 0) {
+          const lastItem = this.#stack[this.#stack.length - 1]
+          lastItem.item = item.item
+        }
+      }
+    }
+    // const currentStack = item ? this.#stack.concat(item) : this.#stack
+    const joinedStack = this.#stack.map(c => {
       if (c.index === undefined) {
         return c.item
       }
       return `${c.item}[${c.index}]`
     }).join('.').replace(/\.$/, '')
-    this.#output.push(`${position} ${joinedStack}`)
-    if (addToStack && item) {
-      this.#stack.push(item)
+    if (joinedStack) {
+      this.#output.push(`${position} ${joinedStack}`)
     }
   }
 
@@ -112,10 +121,6 @@ module.exports = class FlattenJsonFormatter {
     }
     const lastItem = this.#stack[this.#stack.length - 1]
     lastItem.index = lastItem.index === undefined ? -1 : lastItem.index + 1
-  }
-
-  popArray () {
-
   }
 
   /**
@@ -137,16 +142,13 @@ module.exports = class FlattenJsonFormatter {
       }
     }
     parser.onkey = function (key) {
-      formatter.push(parser.position, key, false)
+      formatter.push(parser.position - key.length - 3, key, false)
     }
     parser.oncloseobject = function () {
       formatter.pop()
     }
     parser.onopenarray = function () {
       formatter.pushArray()
-    }
-    parser.onclosearray = function () {
-      formatter.popArray()
     }
     parser.onvalue = function (value) {
       formatter.push(parser.position - JSON.stringify(value).length - 1, undefined, false)

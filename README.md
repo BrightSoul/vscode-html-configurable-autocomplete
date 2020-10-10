@@ -117,6 +117,41 @@ Take a look at the [.vscode/settings.json](https://github.com/Halleymedia/vuejs-
       // They should have this icon
       "itemKind": "Enum"
     },
+    {
+      // Fixed config
+      "enable": true,
+      // It should also be activated when { is pressed (for moustached syntax)
+      "triggerCharacters": [
+        "{", " "
+      ],
+      // But just when two { have been typed already
+      "triggerRegexp": "{{\\s*",
+      // This is a global property we can use in the html views
+      "staticItems": [
+        "localization"
+      ],
+      "completionItemSuffix": ".",
+      // It should have this icon
+      "itemKind": "Constant"
+    },
+    {
+      // Can be omitted
+      "enable": true,
+      // It should also be activated when { or . is pressed
+      "triggerCharacters": [
+        "{", "."
+      ],
+      // But just when two { have been typed already and also when 'localization' has been typed
+      "triggerRegexp": "{{\\s*localization\\.([^} ]*)",
+      // Go look inside the localization JSON file
+      "includeGlobPattern": "src/localization[.]json",
+      // Transform JSON content to a flattened hierarchy
+      "contentTransformer": "flatten-json",
+      // And inside of it, look for properties. The $1 placeholder will be substituted by the capture in triggerRegexp (i.e. what the user typed)
+      "contentRegexp": " $1([a-z0-9_]+)",
+      // It should have this icon
+      "itemKind": "Field"
+    }
   ],
 
   // Now tell it how to navigate to definitions
@@ -303,7 +338,7 @@ Suppose the current editor has this JSON content:
   "aa": [
     {"bb": 1},
     {"cc": 2},
-    {"dd": [ {"ee": 3}, "foo" ] }
+    {"dd": [ {"ee": 3}, {"ff": 5} ] }
   ]
 }
 ```
@@ -311,15 +346,22 @@ Suppose the current editor has this JSON content:
 It will be transformed as follows, by outputting the full path of each property.
 
 ```
-<div data-for="foo">
-<div data-for="foo"><span>
-<div data-for="foo"><span>bar
+1,2 aa
+2,5 aa[0].bb
+3,5 aa[1].cc
+4,5 aa[2].dd
+4,14 aa[2].dd[0].ee
+4,25 aa[2].dd[1].ff
 ```
 
-It's now easier to write the `triggerRegexp`, since it will execute on this transformed content. Here's an example of a `triggerRegexp` which will match the `span` element only if inside an ancestor having the `data-for` attribute. 
+It's now easier to write the `contentRegexp`, since it will execute on this transformed content. Here's an example of a `contentRegexp` which will match and suggest the `bb` property after the user typed `$1` where `$1` is a placeholder for what the user typed in the VSCode editor. 
 
 ```
-<.*?data-foo=.*?>.*<span
+$1([a-z0-9_]+)
+```
+We must now provide a `triggerRegexp` containing a capture so it will be used in lieu of the `$1` placeholder.
+```
+(aa\[\n\]\.)
 ```
 
 
@@ -351,6 +393,11 @@ Oh well, some things could be improved...
  * The use of transformers might lead to suboptimal performance with large projects since no caching mechanism is used in the current version. Caching for completion items, definitions and references might be implemented in a future version, along with file watchers for automatic cache invalidation.
 
 ## Release Notes
+
+### 1.4.0 (2020-10-10)
+
+ - transformer `flatten-json`;
+ - in completion item providers, the `contentRegexp` can use placeholders such as `$1`, `$2`, ..., `$n`. They will be replaced by the capture group values from the `triggerRegexp` (if any).
 
 ### 1.3.1 (2020-09-22)
 
