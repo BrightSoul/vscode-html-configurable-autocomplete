@@ -289,7 +289,26 @@ Suppose the current editor has this HTML content:
 </div>
 ```
 
-It will be transformed as follows, by repeating all ancestors for each given element or text node.
+### flatten-json
+In case you want to autocomplete the hierarchy of properties found in a json file, then this is the transformer for you. It uses [clarinet](https://github.com/dscape/clarinet) to parse the JSON content and flatten its hierarchy of properties so it will be easier for you to write a regular expression.
+
+It can be used for the following settings:
+ * `htmlConfigurableAutocomplete.completionItemProviders[].contentTransformer`
+ * `htmlConfigurableAutocomplete.definitionProviders[].contentTransformer`
+
+Suppose the current editor has this JSON content:
+
+```
+{
+  "aa": [
+    {"bb": 1},
+    {"cc": 2},
+    {"dd": [ {"ee": 3}, "foo" ] }
+  ]
+}
+```
+
+It will be transformed as follows, by outputting the full path of each property.
 
 ```
 <div data-for="foo">

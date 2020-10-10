@@ -1,4 +1,4 @@
-const clarinet = require('clarinet');
+const clarinet = require('clarinet')
 
 module.exports = class FlattenJsonFormatter {
   /**
@@ -37,7 +37,7 @@ module.exports = class FlattenJsonFormatter {
   #objectsClosed = 0;
 
   /**
-   * @param {string} content 
+   * @param {string} content
    */
   constructor (content) {
     this.#content = content
@@ -61,17 +61,20 @@ module.exports = class FlattenJsonFormatter {
    * @param {boolean} addToStack
    */
   push (startIndex, key, addToStack) {
-
-    // Compensate for this bug: https://github.com/dscape/clarinet/issues/68
-    startIndex -= this.#objectsClosed;
+    // Compensate for this bug in clarinet: https://github.com/dscape/clarinet/issues/68
+    // TODO: Send them a proper pull request or fork it
+    if (key === '' && addToStack) {
+      this.#objectsClosed -= 1
+    }
+    startIndex -= this.#objectsClosed
 
     if (this.#stack.length > 0) {
-      const lastItem = this.#stack[this.#stack.length-1];
+      const lastItem = this.#stack[this.#stack.length - 1]
       if (lastItem !== undefined && lastItem.index !== undefined) {
-        lastItem.index++;
+        lastItem.index++
       }
       if (lastItem.index === undefined && key === undefined) {
-        return;
+        return
       }
     }
 
@@ -82,8 +85,8 @@ module.exports = class FlattenJsonFormatter {
       }
     }
     this.#lastIndex = startIndex
-    
-    const item = key ? { item: key, index: undefined } : undefined
+
+    const item = key !== undefined ? { item: key, index: undefined } : undefined
     const position = `${this.#line},${startIndex - this.#lastLineIndex - 1}`
     const currentStack = item ? this.#stack.concat(item) : this.#stack
     const joinedStack = currentStack.map(c => {
@@ -91,7 +94,7 @@ module.exports = class FlattenJsonFormatter {
         return c.item
       }
       return `${c.item}[${c.index}]`
-    }).join('.');
+    }).join('.').replace(/\.$/, '')
     this.#output.push(`${position} ${joinedStack}`)
     if (addToStack && item) {
       this.#stack.push(item)
@@ -107,12 +110,12 @@ module.exports = class FlattenJsonFormatter {
     if (this.#stack.length === 0) {
       this.push(0, '', true)
     }
-    const lastItem = this.#stack[this.#stack.length-1]
+    const lastItem = this.#stack[this.#stack.length - 1]
     lastItem.index = lastItem.index === undefined ? -1 : lastItem.index + 1
   }
 
   popArray () {
-    
+
   }
 
   /**
@@ -124,11 +127,14 @@ module.exports = class FlattenJsonFormatter {
     /**
      * @type {clarinet.CParser}
      */
-    let parser;
-    parser = clarinet.parser()
-    
+    const parser = clarinet.parser()
+
     parser.onopenobject = function (key) {
-      formatter.push(parser.position - key.length - 3, key, true)
+      if (key) {
+        formatter.push(parser.position - key.length - 3, key, true)
+      } else {
+        formatter.push(parser.position - 3, '', true)
+      }
     }
     parser.onkey = function (key) {
       formatter.push(parser.position, key, false)
@@ -137,15 +143,15 @@ module.exports = class FlattenJsonFormatter {
       formatter.pop()
     }
     parser.onopenarray = function () {
-      formatter.pushArray();
+      formatter.pushArray()
     }
     parser.onclosearray = function () {
-      formatter.popArray();
+      formatter.popArray()
     }
     parser.onvalue = function (value) {
       formatter.push(parser.position - JSON.stringify(value).length - 1, undefined, false)
     }
-    
+
     parser.write(content)
     parser.close()
     return formatter.getOutput()

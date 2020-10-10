@@ -143,9 +143,12 @@ module.exports = class ConfigurableCompletionItemProvider {
         while ((match = regexp.exec(transformResult.content)) && (itemPerFileMaxCount-- > 0) && (completionList.length <= this.options.maxItems)) {
           const itemText = match[1] || match[0]
           const transformedItemText = Transformer.transformContent(this.options.completionItemTransformer, itemText, itemText)
-          const item = new vscode.CompletionItem(transformedItemText.content, this.options.itemKind)
-          createSnippetForCompletionItem(item, this.options)
-          completionList.push(item)
+          // Avoid duplicates
+          if (completionList.findIndex(completionItem => completionItem.label === transformedItemText.content) < 0) {
+            const item = new vscode.CompletionItem(transformedItemText.content, this.options.itemKind)
+            createSnippetForCompletionItem(item, this.options)
+            completionList.push(item)
+          }
         }
       } catch (error) {
         Logger.error(error)
