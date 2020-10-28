@@ -2,13 +2,17 @@
 
 ## [Unreleased]
 
+## [1.4.1] - 2020-10-10
+### Fixed
+ - fixed a bug on completion item providers throwing an exception on a trigger regexp containing optional captures.
+
 ## [1.4.0] - 2020-10-10
 ### Added
  - transformer `flatten-json`;
  - in completion item providers, the `contentRegexp` can use placeholders such as `$1`, `$2`, ..., `$n`. They will be replaced by the capture group values from the `triggerRegexp` (if any).
 
 ## [1.3.1] - 2020-09-22
-### Added
+### Fixed
  - fixed a bug on navigating to definition when the `es6-module-nodes` transformer is used.
 
 ## [1.3.0] - 2020-08-26
@@ -32,7 +36,8 @@
  - Completion item providers.
  - Definition providers.
 
-[Unreleased]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.2.0...v1.3.0

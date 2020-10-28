@@ -394,6 +394,11 @@ Oh well, some things could be improved...
 
 ## Release Notes
 
+### 1.4.1 (2020-10-28)
+
+ - fixed a bug on completion item providers throwing an exception on a trigger regexp containing optional captures.
+
+
 ### 1.4.0 (2020-10-10)
 
  - transformer `flatten-json`;

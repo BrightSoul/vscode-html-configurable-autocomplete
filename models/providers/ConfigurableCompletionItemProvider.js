@@ -175,7 +175,7 @@ function replaceTokensInRegexp (source, match) {
   }
   const literalRegexp = new RegExp('[.*+?^${}()|[\\]\\\\]', 'g')
   for (let i = 1; i < match.length; i++) {
-    source = source.replace(`$${i}`, match[i].replace(literalRegexp, '\\$&'))
+    source = source.replace(`$${i}`, match[i] == null ? '' : match[i].replace(literalRegexp, '\\$&'))
   }
   return source
 }
