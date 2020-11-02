@@ -394,10 +394,13 @@ Oh well, some things could be improved...
 
 ## Release Notes
 
+### 1.4.2 (2020-11-03)
+
+ - more opportunities of completion: whenever a trigger of a completion item provider captures transformed content, that same content is fed into a definition provider. Useful when you need to suggest slot names of custom components.
+
 ### 1.4.1 (2020-10-28)
 
  - fixed a bug on completion item providers throwing an exception on a trigger regexp containing optional captures.
-
 
 ### 1.4.0 (2020-10-10)
 

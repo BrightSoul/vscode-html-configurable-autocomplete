@@ -116,8 +116,10 @@ module.exports = class ConfigurableCompletionItemProvider {
       return []
     }
 
-    const includeGlobPattern = await PathProvider.replaceAllPathVariables(this.options.includeGlobPattern, this.providerRegistry, document, position, token)
-    const excludeGlobPattern = await PathProvider.replaceAllPathVariables(this.options.excludeGlobPattern, this.providerRegistry, document, position, token)
+    const matchText = triggerMatch ? triggerMatch.input : undefined
+
+    const includeGlobPattern = await PathProvider.replaceAllPathVariables(this.options.includeGlobPattern, this.providerRegistry, document, position, matchText, token)
+    const excludeGlobPattern = await PathProvider.replaceAllPathVariables(this.options.excludeGlobPattern, this.providerRegistry, document, position, matchText, token)
 
     if (!includeGlobPattern) {
       return []

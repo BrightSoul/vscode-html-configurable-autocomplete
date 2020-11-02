@@ -24,7 +24,23 @@ module.exports = class ConfigurableDefinitionProvider {
    * @returns {Promise<vscode.Location|undefined>}
    */
   async provideDefinition (document, position, token) {
-    const definitionName = this.getDefinitionName(document, position)
+    const currentLine = document.lineAt(position.line)
+    return this.provideDefinitionByText(document, currentLine.text, position.character, token)
+  }
+
+  /**
+   * @param {vscode.TextDocument} document
+   * @param {string|undefined} text
+   * @param {number} character
+   * @param {vscode.CancellationToken} token
+   * @returns {Promise<vscode.Location|undefined>}
+   */
+  async provideDefinitionByText (document, text, character, token) {
+    if (!text) {
+      return undefined
+    }
+
+    const definitionName = this.getDefinitionName(text, character)
     if (!definitionName) {
       // Couldn't extract a definition name from current location, just return
       return
@@ -35,18 +51,17 @@ module.exports = class ConfigurableDefinitionProvider {
   }
 
   /**
-   * @param {vscode.TextDocument} document
-   * @param {vscode.Position} position
+   * @param {string} line
+   * @param {number} character
    * @returns {string|undefined}
    */
-  getDefinitionName (document, position) {
-    const currentLine = document.lineAt(position.line)
+  getDefinitionName (line, character) {
     let match
     const regexp = new RegExp(this.options.definitionRegexp.source, this.options.definitionRegexp.flags)
-    while ((match = regexp.exec(currentLine.text))) {
-      if (position.character >= match.index && position.character <= match.index + match[0].length) {
+    while ((match = regexp.exec(line))) {
+      if (character >= match.index && character <= match.index + match[0].length) {
         const definitionName = match[1] || match[0]
-        const transformedDefinitionName = Transformer.transformContent(this.options.definitionTransformer, definitionName, currentLine.text)
+        const transformedDefinitionName = Transformer.transformContent(this.options.definitionTransformer, definitionName, line)
         return transformedDefinitionName.content
       } else {
         Logger.debug(`Definition regexp '${this.options.definitionRegexp.source}' matched '${match[0]}' but that match was discarded because the editor cursor was not placed inside that match`)

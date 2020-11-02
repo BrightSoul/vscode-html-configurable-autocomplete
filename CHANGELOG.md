@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.4.2] - 2020-11-03
+### Added
+ - more opportunities of completion: whenever a trigger of a completion item provider captures transformed content, that same content is fed into a definition provider. Useful when you need to suggest slot names of custom components.
+
 ## [1.4.1] - 2020-10-28
 ### Fixed
  - fixed a bug on completion item providers throwing an exception on a trigger regexp containing optional captures.
@@ -36,7 +40,8 @@
  - Completion item providers.
  - Definition providers.
 
-[Unreleased]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/BrightSoul/vscode-html-configurable-autocomplete/compare/v1.3.0...v1.3.1

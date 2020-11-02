@@ -7,12 +7,13 @@ module.exports = class PathProvider {
    * @param {import('./ProviderRegistry')} providerRegistry
    * @param {vscode.TextDocument} document
    * @param {vscode.Position} position
+   * @param {string|undefined} matchText
    * @param {vscode.CancellationToken} token
    * @returns {Promise<string|undefined>}
    */
-  static async replaceAllPathVariables (text, providerRegistry, document, position, token) {
+  static async replaceAllPathVariables (text, providerRegistry, document, position, matchText, token) {
     text = this.replaceDocumentPathVariables(text, document)
-    text = await this.replaceDefinitionPathVariables(text, providerRegistry, document, position, token)
+    text = await this.replaceDefinitionPathVariables(text, providerRegistry, document, position, matchText, token)
     return text
   }
 
@@ -44,10 +45,11 @@ module.exports = class PathProvider {
    * @param {import('./ProviderRegistry')} providerRegistry
    * @param {vscode.TextDocument} document
    * @param {vscode.Position} position
+   * @param {string|undefined} matchText
    * @param {vscode.CancellationToken} token
    * @returns {Promise<string|undefined>}
    */
-  static async replaceDefinitionPathVariables (text, providerRegistry, document, position, token) {
+  static async replaceDefinitionPathVariables (text, providerRegistry, document, position, matchText, token) {
     if (!text || !text.includes('${definition')) {
       return text
     }
@@ -57,7 +59,12 @@ module.exports = class PathProvider {
     }
 
     for (const provider of providerRegistry.definitionProviders) {
-      const location = await provider.provideDefinition(document, position, token)
+      let location = await provider.provideDefinition(document, position, token)
+      if (!location) {
+        // Attempt at getting a definition from the match, in case it was transformed
+        const character = matchText ? matchText.length : 0
+        location = await provider.provideDefinitionByText(document, matchText, character, token)
+      }
       if (location) {
         const workspaceDir = vscode.workspace.getWorkspaceFolder(location.uri)
         if (!workspaceDir) {
